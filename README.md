@@ -1,5 +1,5 @@
 Starting Express Server Routes:
 
 * `Get  /conversations` Read/Display all conversations
-* `Post /conversation` Create new conversation
+* `Post /conversation/:id` Create new conversation
 * `Delete /conversation/:id` Delete conversation
