@@ -25,3 +25,6 @@ app.listen(PORT, () => {
 //////////////////////////////////
 //Routes
 /////////////////////////////////
+
+const chatAppRouter = require('./routes/chat-app-router');
+app.use('/chat', chatAppRouter) //Each route will begin with /chat
