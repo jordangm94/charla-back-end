@@ -7,7 +7,8 @@ const bcrypt = require("bcryptjs");
 /// Index
 /////////////////////////////////
 
-module.exports = db => {
+module.exports = (db, actions) => {
+  const { getContactByEmail } = actions;
 
   router.get('/', (req, res) => {
     res.send('Hello from the CHAT APP!');
@@ -29,9 +30,20 @@ module.exports = db => {
     });
   });
 
+  router.post('/register', (req, res) => {
+
+  });
+
   router.post('/login', (req, res) => {
     const { email, password } = req.body;
 
+    getContactByEmail(email).then(contact => {
+      if (!contact || !bcrypt.compareSync(password, contact.password_hash)) {
+        return res.json({ error: "Failed login", message: "Incorrect email or password!" });
+      } else {
+        return res.json({ error: null, message: "Success", user });
+      }
+    });
 
   });
 
