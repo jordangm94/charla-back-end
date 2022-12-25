@@ -21,7 +21,7 @@ module.exports = (db, actions) => {
     const contact = req.contact;
 
     db.query(
-      `SELECT DISTINCT ON (participant.conversation_id) participant.conversation_id, conversation_name, message.id AS message_id, message_text
+      `SELECT DISTINCT ON (participant.conversation_id) participant.conversation_id, conversation_name, message.id AS message_id, message_text, message.contact_id AS message_owner_id
 
       FROM participant JOIN conversation ON participant.conversation_id = conversation.id JOIN message ON conversation.id = message.conversation_id
       
@@ -39,9 +39,9 @@ module.exports = (db, actions) => {
     const conversationID = req.query.conversationID;
 
     db.query(
-      `SELECT participant.contact_id
+      `SELECT contact.id, first_name, last_name, profile_photo_url
 
-      FROM participant JOIN conversation ON conversation_id = conversation.id
+      FROM participant JOIN conversation ON conversation_id = conversation.id JOIN contact ON participant.contact_id = contact.id
 
       WHERE conversation_id = $1
 
