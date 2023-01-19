@@ -13,7 +13,7 @@ CREATE TABLE conversation (
 CREATE TABLE message (
   id SERIAL PRIMARY KEY NOT NULL,
   message_text VARCHAR(2000) NOT NULL,
-  sent_datetime TIMESTAMPTZ, 
+  sent_datetime TIMESTAMPTZ NOT NULL, 
   conversation_id INTEGER REFERENCES conversation(id) ON DELETE CASCADE
 );
 
@@ -32,6 +32,6 @@ CREATE TABLE group_member (
   id SERIAL PRIMARY KEY NOT NULL,
   conversation_id INTEGER REFERENCES conversation(id) ON DELETE CASCADE,
   contact_id INTEGER REFERENCES contact(id) ON DELETE CASCADE,
-  joined_datetime TIMESTAMPTZ,
-  left_datetime TIMESTAMPTZ
+  joined_datetime TIMESTAMPTZ NOT NULL,
+  left_datetime TIMESTAMPTZ NOT NULL
 );
