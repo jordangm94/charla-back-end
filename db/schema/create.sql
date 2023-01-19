@@ -1,5 +1,7 @@
 DROP TABLE IF EXISTS conversation CASCADE;
 DROP TABLE IF EXISTS message CASCADE;
+DROP TABLE IF EXISTS contact CASCADE;
+
 
 -- Must determine if we want conversation name to be mandatory or not, would be good for groups but not for individual conversations
 CREATE TABLE conversation (
@@ -12,4 +14,15 @@ CREATE TABLE message (
   message_text VARCHAR(2000) NOT NULL,
   sent_datetime TIMESTAMPTZ, 
   conversation_id INTEGER REFERENCES conversation(id) ON DELETE CASCADE
+);
+
+-- Might need to adjust passwrd hash length from 255, as hash might be more then this!
+CREATE TABLE contact (
+  id SERIAL PRIMARY KEY NOT NULL,
+  first_name VARCHAR(255) NOT NULL,
+  last_name VARCHAR(255) NOT NULL,
+  user_name VARCHAR(255) NOT NULL,
+  email VARCHAR(255) NOT NULL,
+  password_hash VARCHAR(255) NOT NULL,
+  profile_photo_url VARCHAR(255) NOT NULL
 );
