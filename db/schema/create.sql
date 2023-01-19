@@ -12,6 +12,7 @@ CREATE TABLE conversation (
 -- Use of TIMESTAMPTZ allows for value to be stored as UTC and automatically adjusts when db experiences timezone change
 CREATE TABLE message (
   id SERIAL PRIMARY KEY NOT NULL,
+  contact_id INTEGER REFERENCES contact(id) ON DELETE CASCADE,
   message_text VARCHAR(2000) NOT NULL,
   sent_datetime VARCHAR(255) NOT NULL, 
   conversation_id INTEGER REFERENCES conversation(id) ON DELETE CASCADE
