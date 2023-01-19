@@ -15,3 +15,9 @@ VALUES (1, 'Hello', NOW(), 1),
 (2, 'Hi there!', NOW(), 1),
 (1, 'This is a cool app right?', NOW(), 1),
 (2, 'Yes it is amazing!', NOW(), 1);
+
+DELETE from group_member;
+
+INSERT into group_member (conversation_id, contact_id, joined_datetime, left_datetime)
+VALUES (1, 1, NOW(), NULL),
+(1, 2, NOW(), NULL);

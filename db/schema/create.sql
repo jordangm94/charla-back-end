@@ -33,6 +33,6 @@ CREATE TABLE group_member (
   id SERIAL PRIMARY KEY NOT NULL,
   conversation_id INTEGER REFERENCES conversation(id) ON DELETE CASCADE,
   contact_id INTEGER REFERENCES contact(id) ON DELETE CASCADE,
-  joined_datetime TIMESTAMPTZ NOT NULL,
-  left_datetime TIMESTAMPTZ NOT NULL
+  joined_datetime VARCHAR(255) NOT NULL,
+  left_datetime VARCHAR(255)
 );
