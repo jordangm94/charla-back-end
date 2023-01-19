@@ -13,7 +13,7 @@ CREATE TABLE conversation (
 CREATE TABLE message (
   id SERIAL PRIMARY KEY NOT NULL,
   message_text VARCHAR(2000) NOT NULL,
-  sent_datetime TIMESTAMPTZ NOT NULL, 
+  sent_datetime VARCHAR(255) NOT NULL, 
   conversation_id INTEGER REFERENCES conversation(id) ON DELETE CASCADE
 );
 
