@@ -8,7 +8,7 @@ const pool = new Pool({
 });
 
 pool.query(`
-Select id, first_name, last_name, user_name
+SELECT id, first_name, last_name, user_name
 FROM contact;`)
 .then(res => {
   console.log(res.rows);
