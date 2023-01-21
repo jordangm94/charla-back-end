@@ -20,7 +20,7 @@ CREATE TABLE contact (
   password_hash VARCHAR(255) NOT NULL,
   profile_photo_url VARCHAR(255) NOT NULL
 );
--- Use of TIMESTAMPTZ allows for value to be stored as UTC and automatically adjusts when db experiences timezone change
+
 CREATE TABLE message (
   id SERIAL PRIMARY KEY NOT NULL,
   contact_id INTEGER REFERENCES contact(id) ON DELETE CASCADE,
