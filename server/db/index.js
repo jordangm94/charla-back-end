@@ -1,3 +1,5 @@
+//This file houses the pg connection between Express Server and PostgreSQL database
+
 const { Pool } = require('pg');
 
 const pool = new Pool({
