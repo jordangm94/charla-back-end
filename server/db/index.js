@@ -1,20 +1,12 @@
-//This file houses the pg connection between Express Server and PostgreSQL database
+const pg = require("pg");
 
-// const { Pool } = require('pg');
+const client = new pg.Client({
+  connectionString: process.env.DATABASE_URL || "",
+  ssl: process.env.DATABASE_URL ? { rejectUnauthorized: false } : false
+});
 
-// const pool = new Pool({
-//   user: 'vagrant',
-//   password: '123',
-//   host: 'localhost',
-//   database: 'charla'
-// });
+client
+  .connect()
+  .catch(e => console.log(`Error connecting to Postgres server:\n${e}`));
 
-// pool.query(`
-// SELECT id, first_name, last_name, user_name
-// FROM contact;`)
-// .then(res => {
-//   console.log(res.rows);
-// })
-// .catch(err => console.error('query error', err.stack));
-
-// module.exports = pool;
+module.exports = client;
