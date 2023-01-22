@@ -1,30 +1,30 @@
-const express = require('express');
-const morgan = require('morgan'); //Outputs request data
+// const express = require('express');
+// const morgan = require('morgan'); //Outputs request data
 
-//////////////////////////////////
-//Configuration
-/////////////////////////////////
-const app = express();
-const PORT = 5000;
+// //////////////////////////////////
+// //Configuration
+// /////////////////////////////////
+// const app = express();
+// const PORT = 5000;
 
-//////////////////////////////////
-//Middleware
-/////////////////////////////////
+// //////////////////////////////////
+// //Middleware
+// /////////////////////////////////
 
-app.use(express.urlencoded({extended: true})); //for form submission
-app.use(morgan('dev'));
+// app.use(express.urlencoded({extended: true})); //for form submission
+// app.use(morgan('dev'));
 
-//////////////////////////////////
-//Listener - For server to listen for/be open to requests
-/////////////////////////////////
+// //////////////////////////////////
+// //Listener - For server to listen for/be open to requests
+// /////////////////////////////////
 
-app.listen(PORT, () => {
-  console.log('Express app is listening on port:', PORT)
-})
+// app.listen(PORT, () => {
+//   console.log('Express app is listening on port:', PORT)
+// })
 
-//////////////////////////////////
-//Routes
-/////////////////////////////////
+// //////////////////////////////////
+// //Routes
+// /////////////////////////////////
 
-const chatAppRouter = require('./routes/chat-app-router');
-app.use('/chat', chatAppRouter) //Each route will begin with /chat
+// const chatAppRouter = require('./routes/chat-app-router');
+// app.use('/chat', chatAppRouter) //Each route will begin with /chat
