@@ -11,5 +11,3 @@ module.exports = db => {
   });
   return router;
 }
-
-module.exports = router;
