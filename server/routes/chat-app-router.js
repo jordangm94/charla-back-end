@@ -1,3 +1,4 @@
+const { response } = require('express');
 const express = require('express');
 const router = express.Router();
 
@@ -6,15 +7,23 @@ const router = express.Router();
 /////////////////////////////////
 
 module.exports = db => {
+
   router.get('/', (req, res) => {
     res.send('Hello from the CHAT APP!');
   });
+
+  router.get('/chat/list', (req, res) => {
+    db.query(
+      `SELECT conversation_id, conversation.conversation_name, message.id, message.message_text, contact.first_name, contact.last_name
+
+      FROM conversation JOIN message ON conversation.id = conversation_id JOIN contact ON contact_id = contact.id
+      
+      ORDER BY message.id DESC;`
+    ).then(({ rows }) => {
+      response.json(rows);
+    })
+  });
+
   return router;
 }
-
-SELECT conversation_id, conversation.conversation_name, message.id, message.message_text, contact.first_name, contact.last_name
-
-FROM conversation JOIN message ON conversation.id = conversation_id JOIN contact ON contact_id = contact.id
-
-ORDER BY message.id DESC;
 
