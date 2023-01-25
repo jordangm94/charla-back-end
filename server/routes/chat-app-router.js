@@ -18,7 +18,7 @@ module.exports = db => {
 
       FROM conversation JOIN message ON conversation.id = conversation_id JOIN contact ON contact_id = contact.id
       
-      ORDER BY message.id DESC;`
+      ORDER BY conversation_id ASC, message.id DESC;`
     ).then(({ rows }) => {
       res.json(rows);
     })
