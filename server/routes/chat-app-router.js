@@ -20,7 +20,7 @@ module.exports = db => {
       
       ORDER BY message.id DESC;`
     ).then(({ rows }) => {
-      response.json(rows);
+      res.json(rows);
     })
   });
 
