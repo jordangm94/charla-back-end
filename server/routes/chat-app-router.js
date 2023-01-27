@@ -21,15 +21,14 @@ module.exports = db => {
       ORDER BY conversation_id ASC, message.id DESC;`
     ).then(({ rows }) => {
       res.json(rows);
-    })
+    });
   });
 
-  return router;
-}
-
-//login
   router.post('/login', (req, res) => {
+    const { email, password } = req.body;
 
+    
   });
+
   return router;
 };
