@@ -18,8 +18,8 @@ CREATE TABLE contact (
 CREATE TABLE conversation (
   id SERIAL PRIMARY KEY NOT NULL,
   conversation_name VARCHAR(250),
-  member_1 INTEGER REFERENCES contact(id),
-  member_2 INTEGER REFERENCES contact(id)
+  member_1 INTEGER REFERENCES contact(id) NOT NULL,
+  member_2 INTEGER REFERENCES contact(id) NOT NULL
 );
 
 CREATE TABLE message (
