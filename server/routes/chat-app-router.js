@@ -1,6 +1,7 @@
 const { request, response } = require('express');
 const express = require('express');
 const router = express.Router();
+const bcrypt = require("bcryptjs");
 
 /////////////////////////////////
 /// Index
@@ -27,7 +28,7 @@ module.exports = db => {
   router.post('/login', (req, res) => {
     const { email, password } = req.body;
 
-    
+
   });
 
   return router;
