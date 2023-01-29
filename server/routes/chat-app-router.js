@@ -19,7 +19,7 @@ module.exports = db => {
 
       FROM conversation JOIN message ON conversation.id = conversation_id JOIN contact ON contact_id = contact.id
     
-      WHERE member_1 = 1
+      WHERE member_1 = 1 OR member_2 = 1
           
       ORDER BY conversation_id ASC, message.id DESC;
       `
