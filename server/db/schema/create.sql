@@ -1,16 +1,9 @@
 DROP TABLE IF EXISTS conversation CASCADE;
 DROP TABLE IF EXISTS message CASCADE;
 DROP TABLE IF EXISTS contact CASCADE;
-DROP TABLE IF EXISTS group_member CASCADE;
+-- DROP TABLE IF EXISTS group_member CASCADE;
 
-
--- Must determine if we want conversation name to be mandatory or not, would be good for groups but not for individual conversations
-CREATE TABLE conversation (
-  id SERIAL PRIMARY KEY NOT NULL,
-  conversation_name VARCHAR(250)
-);
-
--- Might need to adjust passwrd hash length from 255, as hash might be more then this!
+-- Might need to adjust password hash length from 255, as hash might be more then this!
 CREATE TABLE contact (
   id SERIAL PRIMARY KEY NOT NULL,
   first_name VARCHAR(255) NOT NULL,
@@ -21,6 +14,14 @@ CREATE TABLE contact (
   profile_photo_url VARCHAR(255) NOT NULL
 );
 
+-- Must determine if we want conversation name to be mandatory or not, would be good for groups but not for individual conversations
+CREATE TABLE conversation (
+  id SERIAL PRIMARY KEY NOT NULL,
+  conversation_name VARCHAR(250),
+  member_1 INTEGER REFERENCES contact(id) NOT NULL,
+  member_2 INTEGER REFERENCES contact(id) NOT NULL
+);
+
 CREATE TABLE message (
   id SERIAL PRIMARY KEY NOT NULL,
   contact_id INTEGER REFERENCES contact(id) ON DELETE CASCADE,
@@ -29,10 +30,10 @@ CREATE TABLE message (
   conversation_id INTEGER REFERENCES conversation(id) ON DELETE CASCADE
 );
 
-CREATE TABLE group_member (
-  id SERIAL PRIMARY KEY NOT NULL,
-  conversation_id INTEGER REFERENCES conversation(id),
-  contact_id INTEGER REFERENCES contact(id),
-  joined_datetime VARCHAR(255) NOT NULL,
-  left_datetime VARCHAR(255)
-);
+-- CREATE TABLE group_member (
+--   id SERIAL PRIMARY KEY NOT NULL,
+--   conversation_id INTEGER REFERENCES conversation(id),
+--   contact_id INTEGER REFERENCES contact(id),
+--   joined_datetime VARCHAR(255) NOT NULL,
+--   left_datetime VARCHAR(255)
+-- );
