@@ -28,13 +28,13 @@ function read(file) {
 
 module.exports = function application(
   ENV,
-  actions = {}
+  actions = { updateAppointment: () => { } }
 ) {
   app.use(cors());
   app.use(helmet());
   app.use(bodyparser.json());
 
-  app.use("/api", routes(db));
+  app.use("/api", routes(db, actions));
 
   if (ENV === "development" || ENV === "test") {
     Promise.all([
