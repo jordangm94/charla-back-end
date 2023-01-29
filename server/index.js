@@ -1,10 +1,10 @@
 const PORT = process.env.PORT || 8001;
 const ENV = require("./environment");
 
-const app = require("./application")(ENV, { getUserByEmail });
+const app = require("./application")(ENV, { getContactByEmail });
 const server = require("http").Server(app);
 
-function getUserByEmail(email) {
+function getContactByEmail(email) {
   const queryString = `
     SELECT *
     FROM contact
