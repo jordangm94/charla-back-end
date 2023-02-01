@@ -11,7 +11,7 @@ CREATE TABLE contact (
   user_name VARCHAR(255) NOT NULL,
   email VARCHAR(255) NOT NULL,
   password_hash VARCHAR(255) NOT NULL,
-  profile_photo_url VARCHAR(255) NOT NULL
+  profile_photo_url VARCHAR(255)
 );
 
 -- Must determine if we want conversation name to be mandatory or not, would be good for groups but not for individual conversations
