@@ -4,7 +4,7 @@ const ENV = require("./environment");
 const app = require("./application")(ENV, { getContactByEmail, getContactByUsername, registerContact });
 const server = require("http").Server(app);
 
-function getContactByEmail(email) {
+function getContactByEmail(db, email) {
   const queryString = `
     SELECT *
     FROM contact
@@ -19,7 +19,7 @@ function getContactByEmail(email) {
     });
 };
 
-function getContactByUsername(username) {
+function getContactByUsername(db, username) {
   const queryString = `
     SELECT *
     FROM contact
@@ -34,10 +34,10 @@ function getContactByUsername(username) {
     });
 };
 
-function registerContact(firstName, lastName, username, email, hashedPassword) {
+function registerContact(db, firstName, lastName, username, email, hashedPassword) {
   const queryString = `
-    INSERT INTO users (first_name, last_name, user_name, email, password_hash)
-    VALUES ($1, $2, $3)
+    INSERT INTO contact (first_name, last_name, user_name, email, password_hash)
+    VALUES ($1, $2, $3, $4, $5)
     RETURNING *
   `;
   const params = [firstName, lastName, username, email, hashedPassword];
