@@ -57,11 +57,11 @@ module.exports = (db, actions) => {
   router.post('/login', (req, res) => {
     const { email, password } = req.body;
 
-    getContactByEmail(email).then(contact => {
+    getContactByEmail(db, email).then(contact => {
       if (!contact || !bcrypt.compareSync(password, contact.password_hash)) {
         return res.json({ error: "Failed login", message: "Incorrect email or password!" });
       } else {
-        return res.json({ error: null, message: "Success", user });
+        return res.json({ error: null, message: "Success", contact });
       }
     });
 
