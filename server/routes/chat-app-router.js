@@ -8,7 +8,7 @@ const bcrypt = require("bcryptjs");
 /////////////////////////////////
 
 module.exports = (db, actions) => {
-  const { getContactByEmail } = actions;
+  const { getContactByEmail, getContactByUsername, registerContact } = actions;
 
   router.get('/', (req, res) => {
     res.send('Hello from the CHAT APP!');
@@ -32,17 +32,36 @@ module.exports = (db, actions) => {
   });
 
   router.post('/register', (req, res) => {
+    const { firstName, lastName, username, email, password } = req.body;
 
+    getContactByEmail(db, email).then(contact => {
+      if (contact) {
+        return res.json({ error: "Email exists", message: "An account with this email already exists!" });
+      }
+      getContactByUsername(db, username).then(contact => {
+        if (contact) {
+          return res.json({ error: "Username exists", message: "This username has already been taken!" });
+        } else {
+          const hashedPassword = bcrypt.hashSync(password, 10);
+          registerContact(db, firstName, lastName, username, email, hashedPassword).then(contact => {
+            return res.json({ error: null, message: "Success", contact });
+          })
+            .catch(error => {
+              console.log(error.message);
+            });
+        }
+      });
+    });
   });
 
   router.post('/login', (req, res) => {
     const { email, password } = req.body;
 
-    getContactByEmail(email).then(contact => {
+    getContactByEmail(db, email).then(contact => {
       if (!contact || !bcrypt.compareSync(password, contact.password_hash)) {
         return res.json({ error: "Failed login", message: "Incorrect email or password!" });
       } else {
-        return res.json({ error: null, message: "Success", user });
+        return res.json({ error: null, message: "Success", contact });
       }
     });
 

@@ -28,7 +28,11 @@ function read(file) {
 
 module.exports = function application(
   ENV,
-  actions = { getContactByEmail: () => { } }
+  actions = {
+    getContactByEmail: () => { },
+    getContactByUsername: () => { },
+    registerContact: () => { }
+  }
 ) {
   app.use(cors());
   app.use(helmet());
