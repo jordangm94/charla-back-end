@@ -24,7 +24,6 @@ module.exports = (db, actions) => {
       WHERE member_1 = 1 OR member_2 = 1
       
       ORDER BY conversation.id DESC, message.id DESC;
-      ;
       `
     ).then(({ rows }) => {
       res.json(rows);
