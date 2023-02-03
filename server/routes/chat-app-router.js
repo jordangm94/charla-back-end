@@ -31,6 +31,19 @@ module.exports = (db, actions) => {
     });
   });
 
+  router.get('/search', (req, res) => {
+    db.query(
+      `SELECT contact.id, contact.first_name, contact.last_name
+
+      FROM contact
+      
+      ORDER BY contact.first_name ASC;
+      `
+    ).then(({ rows }) => {
+      res.json(rows);
+    });
+  });
+
   router.post('/register', (req, res) => {
     const { firstName, lastName, username, email, password } = req.body;
 
