@@ -31,6 +31,7 @@ module.exports = (db, actions) => {
   });
 
   router.get('/searchuser', (req, res) => {
+    console.log('Hello from route request', req.query)
     db.query(
       `SELECT contact.id, contact.first_name, contact.last_name
 
