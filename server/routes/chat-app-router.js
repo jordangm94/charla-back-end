@@ -30,7 +30,7 @@ module.exports = (db, actions) => {
     });
   });
 
-  router.get('/search', (req, res) => {
+  router.get('/searchuser', (req, res) => {
     db.query(
       `SELECT contact.id, contact.first_name, contact.last_name
 
