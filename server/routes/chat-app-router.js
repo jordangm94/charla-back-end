@@ -2,6 +2,7 @@ const { request, response } = require('express');
 const express = require('express');
 const router = express.Router();
 const bcrypt = require("bcryptjs");
+const cookieParser = require("cookie-parser");
 
 /////////////////////////////////
 /// Index
@@ -36,18 +37,18 @@ module.exports = (db, actions) => {
 
     getContactByEmail(db, email).then(contact => {
       if (contact) {
-        return res.json({ error: "Email exists", message: "An account with this email already exists!" });
+        return res.status(400).json({ error: "Email exists", message: "An account with this email already exists!" });
       }
       getContactByUsername(db, username).then(contact => {
         if (contact) {
-          return res.json({ error: "Username exists", message: "This username has already been taken!" });
+          return res.status(400).json({ error: "Username exists", message: "This username has already been taken!" });
         } else {
           const hashedPassword = bcrypt.hashSync(password, 10);
           registerContact(db, firstName, lastName, username, email, hashedPassword).then(contact => {
             return res.json({ error: null, message: "Success", contact });
           })
             .catch(error => {
-              console.log(error.message);
+              return res.status(400).json({ error });
             });
         }
       });
@@ -58,10 +59,10 @@ module.exports = (db, actions) => {
     const { email, password } = req.body;
 
     getContactByEmail(db, email).then(contact => {
-      if (!contact || !bcrypt.compareSync(password, contact.password_hash)) {
-        return res.json({ error: "Failed login", message: "Incorrect email or password!" });
-      } else {
+      if (contact && bcrypt.compareSync(password, contact.password_hash)) {
         return res.json({ error: null, message: "Success", contact });
+      } else {
+        return res.status(400).json({ error: "Failed login", message: "Incorrect email or password!" });
       }
     });
 
