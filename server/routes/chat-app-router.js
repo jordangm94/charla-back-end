@@ -17,7 +17,7 @@ module.exports = (db, actions) => {
   });
 
   router.get('/chat/list', (req, res) => {
-    //Used DISTINCT ON to remove duplicate rows of conversation_id (i.e. multiple messages belonging to convo ID 1) and only show 1 message for each conversation ID in the ChatList component.
+    //Used DISTINCT ON to remove duplicate rows of conversation_id (i.e. multiple messages belonging to convo ID) and only show 1 message for each conversation ID in the ChatList component.
     db.query(
       `SELECT DISTINCT ON (conversation.id) conversation_id, conversation_name, member_1, member_2, message.id AS message_id, message_text, contact.id AS contact_id, contact.first_name, contact.last_name, contact.profile_photo_url, contact.email
 
@@ -26,9 +26,26 @@ module.exports = (db, actions) => {
       WHERE member_1 = 1 OR member_2 = 1
       
       ORDER BY conversation.id DESC, message.id DESC;
-      ;
       `
     ).then(({ rows }) => {
+      res.json(rows);
+    });
+  });
+
+  router.get('/searchuser', (req, res) => {
+    const searchUserInput = req.query.searchedUser;
+    console.log('Hello from searchUserInput', searchUserInput)
+    db.query(
+      `SELECT first_name
+    
+      FROM contact
+     
+      WHERE LOWER(first_name) LIKE
+     
+      LOWER('%${searchUserInput}%');
+      `
+    ).then(({ rows }) => {
+      console.log('Hello from your response', res.json(rows))
       res.json(rows);
     });
   });
