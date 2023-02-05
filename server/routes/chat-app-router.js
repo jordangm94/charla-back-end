@@ -31,16 +31,19 @@ module.exports = (db, actions) => {
   });
 
   router.get('/searchuser', (req, res) => {
-    searchUserInput = req.query.searchedUser
-    console.log(searchUserInput)
+    const searchUserInput = req.query.searchedUser;
+    console.log('Hello from searchUserInput', searchUserInput)
     db.query(
-      `SELECT contact.id, contact.first_name, contact.last_name
-
+      `SELECT first_name
+    
       FROM contact
-      
-      ORDER BY contact.first_name ASC;
+     
+      WHERE LOWER(first_name) LIKE
+     
+      LOWER('%${searchUserInput}%');
       `
     ).then(({ rows }) => {
+      console.log('Hello from your response', res.json(rows))
       res.json(rows);
     });
   });
