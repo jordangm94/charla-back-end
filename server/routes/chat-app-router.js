@@ -3,6 +3,7 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require("bcryptjs");
 const cookieParser = require("cookie-parser");
+const { createToken } = require("../JWT");
 
 /////////////////////////////////
 /// Index
