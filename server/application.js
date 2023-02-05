@@ -37,7 +37,6 @@ module.exports = function application(
   app.use(cors());
   app.use(helmet());
   app.use(bodyparser.json());
-  app.use(cookieParser());
 
   app.use("/api", routes(db, actions));
 

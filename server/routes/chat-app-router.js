@@ -2,7 +2,6 @@ const { request, response } = require('express');
 const express = require('express');
 const router = express.Router();
 const bcrypt = require("bcryptjs");
-const cookieParser = require("cookie-parser");
 const { createToken } = require("../JWT");
 
 /////////////////////////////////
