@@ -33,7 +33,7 @@ module.exports = (db, actions) => {
 
   router.get('/searchuser', (req, res) => {
     const searchUserInput = req.query.searchedUser;
-    console.log('Hello from searchUserInput', searchUserInput)
+    console.log('Hello from searchUserInput', searchUserInput);
     db.query(
       `SELECT first_name
     
@@ -44,8 +44,7 @@ module.exports = (db, actions) => {
       LOWER('%${searchUserInput}%');
       `
     ).then(({ rows }) => {
-      console.log('Hello from your response', res.json(rows))
-      res.json(rows);
+      return res.json(rows);
     });
   });
 
