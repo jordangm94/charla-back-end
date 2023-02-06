@@ -35,7 +35,7 @@ module.exports = (db, actions) => {
     const searchUserInput = req.query.searchedUser;
     console.log('Hello from searchUserInput', searchUserInput);
     db.query(
-      `SELECT first_name
+      `SELECT id, first_name, last_name, profile_photo_url
     
       FROM contact
      
