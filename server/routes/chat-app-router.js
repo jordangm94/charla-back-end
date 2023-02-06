@@ -76,14 +76,13 @@ module.exports = (db, actions) => {
 
     getContactByEmail(db, email).then(contact => {
       if (contact && bcrypt.compareSync(password, contact.password_hash)) {
-        return res.json({ error: null, message: "Success", contact });
+        return res.json({ error: null, contact });
       } else {
-        return res.status(400).json({ error: "Failed login", message: "Incorrect email or password!" });
+        return res.status(400).json({ error: "Incorrect email or password!" });
       }
     });
 
   });
-
 
   return router;
 };
