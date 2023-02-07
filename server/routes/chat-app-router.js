@@ -52,9 +52,9 @@ module.exports = (db, actions) => {
 
   //Need to add corresponding ID to the route, send in a request
   router.get(`/chat`, (req, res) => {
-    db.query(`
-
-
+    db.query(`SELECT * 
+      FROM message 
+      WHERE conversation_id = 1;
     `)
     .then(({ rows }) => {
       return res.json(rows)
