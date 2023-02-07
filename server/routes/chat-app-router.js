@@ -32,17 +32,17 @@ module.exports = (db, actions) => {
   });
 
   router.get('/searchuser', (req, res) => {
-    const searchUserInput = req.query.searchedUser;
+    const searchUserInput = `%${req.query.searchedUser}%`;
     console.log('Hello from searchUserInput', searchUserInput);
     db.query(
-      `SELECT first_name
+      `SELECT id, first_name, last_name, profile_photo_url
     
       FROM contact
      
       WHERE LOWER(first_name) LIKE
      
-      LOWER('%${searchUserInput}%');
-      `
+      LOWER($1);
+      `, [searchUserInput]
     ).then(({ rows }) => {
       return res.json(rows);
     });
