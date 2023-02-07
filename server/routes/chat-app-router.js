@@ -50,6 +50,18 @@ module.exports = (db, actions) => {
     });
   });
 
+  //Need to add corresponding ID to the route, send in a request
+  router.get(`/chat`, (req, res) => {
+    db.query(`
+
+
+    `)
+    .then(({ rows }) => {
+      return res.json(rows)
+    })
+
+  });
+
   router.post('/register', (req, res) => {
     const { firstName, lastName, username, email, password } = req.body;
 
