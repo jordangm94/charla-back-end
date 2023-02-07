@@ -76,12 +76,20 @@ module.exports = (db, actions) => {
 
     getContactByEmail(db, email).then(contact => {
       if (contact && bcrypt.compareSync(password, contact.password_hash)) {
+        const accessToken = createToken(contact);
+
+        req.session.accessToken = accessToken;
+
         return res.json({ error: null, contact });
       } else {
         return res.status(400).json({ error: "Incorrect email or password!" });
       }
     });
 
+  });
+
+  router.get('/test', (req, res) => {
+    res.json("test success");
   });
 
   return router;
