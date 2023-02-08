@@ -2,7 +2,7 @@ const { sign, verify } = require("jsonwebtoken");
 
 const createToken = (contact) => {
   const accessToken = sign(
-    { id: contact.id, username: contact.username },
+    { id: contact.id, email: contact.email, username: contact.user_name },
     process.env.JWTSECRET
   );
 
@@ -20,8 +20,7 @@ const validateToken = (req, res, next) => {
     if (error) {
       return res.status(400).json({ error });
     } else {
-      req.contact = decoded.contact;
-      console.log(req.contact);
+      req.contact = { id: decoded.id, email: decoded.email, username: decoded.username };
       return next();
     }
   });
