@@ -35,7 +35,7 @@ module.exports = function application(
     registerContact: () => { }
   }
 ) {
-  app.use(cors());
+  app.use(cors({ credentials: true, origin: true }));
   app.use(helmet());
   app.use(bodyparser.json());
   app.use(cookieSession({

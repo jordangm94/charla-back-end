@@ -2,7 +2,7 @@ const { sign, verify } = require("jsonwebtoken");
 
 const createToken = (contact) => {
   const accessToken = sign(
-    { id: contact.id, username: contact.username },
+    { id: contact.id, email: contact.email, username: contact.user_name },
     process.env.JWTSECRET
   );
 
@@ -12,18 +12,18 @@ const createToken = (contact) => {
 const validateToken = (req, res, next) => {
   const accessToken = req.session.accessToken;
 
-  if (!accessToken) return res.status(400).json({ error: "User not authenticated" });
+  if (!accessToken) {
+    return res.status(400).json({ error: "User not authenticated" });
+  }
 
-  try {
-    const validToken = verify(accessToken, process.env.JWTSECRET);
-
-    if (validToken) {
-      req.authenticated = true;
+  verify(accessToken, process.env.JWTSECRET, (error, decoded) => {
+    if (error) {
+      return res.status(400).json({ error });
+    } else {
+      req.contact = { id: decoded.id, email: decoded.email, username: decoded.username };
       return next();
     }
-  } catch (error) {
-    return res.status(400).json({ error });
-  }
+  });
 };
 
 module.exports = { createToken, validateToken };

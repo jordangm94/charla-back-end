@@ -95,7 +95,7 @@ module.exports = (db, actions) => {
 
         req.session.accessToken = accessToken;
 
-        return res.json({ error: null, contact });
+        return res.json({ error: null, contact: { id: contact.id, email: contact.email, username: contact.user_name } });
       } else {
         return res.status(400).json({ error: "Incorrect email or password!" });
       }
@@ -103,18 +103,9 @@ module.exports = (db, actions) => {
 
   });
 
-  router.post("/authenticate", (req, res) => {
-    if (req.session.userEmail) {
-      getUserByEmail(req.session.userEmail).then(user => {
-        return res.json({ error: null, message: "Success", user });
-      });
-    } else {
-      return res.json({ error: "Failed authentication", message: "You do not have a cookie session!" });
-    }
-  });
-
-  router.get('/test', (req, res) => {
-    return res.json({ message: "test success" });
+  router.post("/authenticate", validateToken, (req, res) => {
+    const contact = req.contact;
+    return res.json({ contact });
   });
 
   return router;
