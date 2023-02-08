@@ -50,17 +50,34 @@ module.exports = (db, actions) => {
     });
   });
 
-  //Need to add corresponding ID to the route, send in a request
-  router.get(`/chat`, (req, res) => {
-    db.query(`SELECT * 
-      FROM message 
-      WHERE conversation_id = 1;
-    `)
-    .then(({ rows }) => {
-      return res.json(rows)
-    })
-
+  router.get('/chat', (req, res) => {
+    const searchUserInput = `%${req.query.searchedUser}%`;
+    console.log('Hello from searchUserInput', searchUserInput);
+    db.query(
+      `SELECT id, first_name, last_name, profile_photo_url
+    
+      FROM contact
+     
+      WHERE LOWER(first_name) LIKE
+     
+      LOWER($1);
+      `, [searchUserInput]
+    ).then(({ rows }) => {
+      return res.json(rows);
+    });
   });
+
+  //Need to add corresponding ID to the route, send in a request
+  // router.get('/chat', (req, res) => {
+  //   console.log(req);
+  //   db.query(`SELECT * 
+  //     FROM message 
+  //     WHERE conversation_id = 1;
+  //   `)
+  //   .then(({ rows }) => {
+  //     res.json(rows)
+  //   })
+  // });
 
   router.post('/register', (req, res) => {
     const { firstName, lastName, username, email, password } = req.body;
