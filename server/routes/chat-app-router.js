@@ -88,6 +88,16 @@ module.exports = (db, actions) => {
 
   });
 
+  router.post("/authenticate", (req, res) => {
+    if (req.session.userEmail) {
+      getUserByEmail(req.session.userEmail).then(user => {
+        return res.json({ error: null, message: "Success", user });
+      });
+    } else {
+      return res.json({ error: "Failed authentication", message: "You do not have a cookie session!" });
+    }
+  });
+
   router.get('/test', (req, res) => {
     res.json("test success");
   });
