@@ -2,7 +2,7 @@ const { request, response } = require('express');
 const express = require('express');
 const router = express.Router();
 const bcrypt = require("bcryptjs");
-const { createToken } = require("../JWT");
+const { createToken, validateToken } = require("../JWT");
 
 /////////////////////////////////
 /// Index
@@ -88,8 +88,9 @@ module.exports = (db, actions) => {
 
   });
 
-  router.get('/test', (req, res) => {
-    res.json("test success");
+  router.post("/authenticate", validateToken, (req, res) => {
+    const contact = req.contact;
+    console.log(contact);
   });
 
   return router;
