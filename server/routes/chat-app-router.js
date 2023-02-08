@@ -15,6 +15,7 @@ module.exports = (db, actions) => {
     res.send('Hello from the CHAT APP!');
   });
 
+  //This route is used to load the profile picture and last message received from each user in the chat list. This information also used in loading searched users (name and profile picture), which also uses the chatlistitem.
   router.get('/chat/list', (req, res) => {
     //Used DISTINCT ON to remove duplicate rows of conversation_id (i.e. multiple messages belonging to convo ID) and only show 1 message for each conversation ID in the ChatList component.
     db.query(
@@ -31,6 +32,7 @@ module.exports = (db, actions) => {
     });
   });
 
+  //This route is used for live searching for a user within the database using the search bar
   router.get('/searchuser', (req, res) => {
     const searchUserInput = `%${req.query.searchedUser}%`;
     console.log('Hello from searchUserInput', searchUserInput);
@@ -47,6 +49,35 @@ module.exports = (db, actions) => {
       return res.json(rows);
     });
   });
+
+  router.get('/chattest', (req, res) => {
+    const searchUserInput = `%${req.query.searchedUser}%`;
+    console.log('Hello from searchUserInput', searchUserInput);
+    db.query(
+      `SELECT id, first_name, last_name, profile_photo_url
+    
+      FROM contact
+     
+      WHERE LOWER(first_name) LIKE
+     
+      LOWER($1);
+      `, [searchUserInput]
+    ).then(({ rows }) => {
+      return res.json(rows);
+    });
+  });
+
+  //Need to add corresponding ID to the route, send in a request
+  // router.get('/chat', (req, res) => {
+  //   console.log(req);
+  //   db.query(`SELECT * 
+  //     FROM message 
+  //     WHERE conversation_id = 1;
+  //   `)
+  //   .then(({ rows }) => {
+  //     res.json(rows)
+  //   })
+  // });
 
   router.post('/register', (req, res) => {
     const { firstName, lastName, username, email, password } = req.body;
