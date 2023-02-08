@@ -50,7 +50,7 @@ module.exports = (db, actions) => {
     });
   });
 
-  router.get('/chat', (req, res) => {
+  router.get('/chattest', (req, res) => {
     const searchUserInput = `%${req.query.searchedUser}%`;
     console.log('Hello from searchUserInput', searchUserInput);
     db.query(
