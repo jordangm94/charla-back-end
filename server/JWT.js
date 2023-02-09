@@ -20,6 +20,7 @@ const validateToken = (req, res, next) => {
     if (error) {
       return res.status(400).json({ error });
     } else {
+      req.authenticated = true;
       req.contact = { id: decoded.id, email: decoded.email, username: decoded.username };
       return next();
     }
