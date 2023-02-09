@@ -1,9 +1,9 @@
 DELETE from contact;
 
 INSERT INTO contact (first_name, last_name, user_name, email, password_hash, profile_photo_url)
-VALUES ('Jordan', 'Guerrero Martinez', 'jordangm94', 'jordan.guerrero.martinez@gmail.com', '12345678', 'https://avatars.githubusercontent.com/u/111808635?v=4'),
-('Jae Yun', 'Jeong', 'alex94', 'jeongalex0616@gmail.com', '12345678', 'https://avatars.githubusercontent.com/u/109401369?v=4'),
-('Alessia', 'G', 'AlessiaG94', 'Alessiag94@gmail.com', '12345678', 'https://media.istockphoto.com/id/1311084168/photo/overjoyed-pretty-asian-woman-look-at-camera-with-sincere-laughter.jpg?b=1&s=170667a&w=0&k=20&c=XPuGhP9YyCWquTGT-tUFk6TwI-HZfOr1jNkehKQ17g0=');
+VALUES ('Jordan', 'Guerrero Martinez', 'jordangm94', 'jordan.guerrero.martinez@gmail.com', '$2a$10$CfPpYSDuhZRoEwkLCMqZjuKJ8rLk3mKcS.vYWLIdxrYH4kOMrCaky', 'https://avatars.githubusercontent.com/u/111808635?v=4'),
+('Jae Yun', 'Jeong', 'alex94', 'jeongalex0616@gmail.com', '$2a$10$CfPpYSDuhZRoEwkLCMqZjuKJ8rLk3mKcS.vYWLIdxrYH4kOMrCaky', 'https://avatars.githubusercontent.com/u/109401369?v=4'),
+('Alessia', 'G', 'AlessiaG94', 'Alessiag94@gmail.com', '$2a$10$CfPpYSDuhZRoEwkLCMqZjuKJ8rLk3mKcS.vYWLIdxrYH4kOMrCaky', 'https://media.istockphoto.com/id/1311084168/photo/overjoyed-pretty-asian-woman-look-at-camera-with-sincere-laughter.jpg?b=1&s=170667a&w=0&k=20&c=XPuGhP9YyCWquTGT-tUFk6TwI-HZfOr1jNkehKQ17g0=');
 
 DELETE from conversation;
 
