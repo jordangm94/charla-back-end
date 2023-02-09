@@ -76,7 +76,11 @@ module.exports = (db, actions) => {
         } else {
           const hashedPassword = bcrypt.hashSync(password, 10);
           registerContact(db, firstName, lastName, username, email, hashedPassword).then(contact => {
-            return res.json({ error: null, message: "Success", contact });
+            const accessToken = createToken(contact);
+
+            req.session.accessToken = accessToken;
+
+            return res.json({ error: null, authenticated: true });
           })
             .catch(error => {
               return res.status(400).json({ error });
@@ -95,7 +99,7 @@ module.exports = (db, actions) => {
 
         req.session.accessToken = accessToken;
 
-        return res.json({ error: null, contact: { id: contact.id, email: contact.email, username: contact.user_name } });
+        return res.json({ error: null, authenticated: true });
       } else {
         return res.status(400).json({ error: "Incorrect email or password!" });
       }
@@ -104,8 +108,8 @@ module.exports = (db, actions) => {
   });
 
   router.post("/authenticate", validateToken, (req, res) => {
-    const contact = req.contact;
-    return res.json({ contact });
+    const authenticated = req.authenticated;
+    return res.json({ authenticated });
   });
 
   return router;
