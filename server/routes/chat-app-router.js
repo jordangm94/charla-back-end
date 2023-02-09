@@ -114,5 +114,10 @@ module.exports = (db, actions) => {
     return res.json({ authenticated });
   });
 
+  router.post("/logout", validateToken, (req, res) => {
+    req.session = null;
+    return res.json({ error: null, auth: false });
+  });
+
   return router;
 };
