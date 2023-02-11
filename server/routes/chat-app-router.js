@@ -62,7 +62,7 @@ module.exports = (db, actions) => {
     `, [conversationId])
       .then(({ rows }) => {
         // res.json(rows);
-      res.json( {rows, contact});
+      res.json( {rows, id: contact.id});
       });
   });
 
