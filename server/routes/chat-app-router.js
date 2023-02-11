@@ -53,15 +53,16 @@ module.exports = (db, actions) => {
   });
 
   //Need to add corresponding ID to the route, send in a request
-  router.get('/chat', (req, res) => {
+  router.get('/chat', validateToken, (req, res) => {
     const conversationId = req.query.id;
-    console.log(conversationId);
+    const contact = req.contact;
     db.query(`SELECT * 
       FROM message 
       WHERE conversation_id = $1;
     `, [conversationId])
       .then(({ rows }) => {
-        res.json(rows);
+        // res.json(rows);
+      res.json( {rows, contact});
       });
   });
 
