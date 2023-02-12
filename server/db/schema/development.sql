@@ -7,9 +7,17 @@ VALUES ('Jordan', 'Guerrero Martinez', 'jordangm94', 'jordan.guerrero.martinez@g
 
 DELETE from conversation;
 
-INSERT INTO conversation (conversation_name, member_1, member_2) 
-VALUES ('First Conversation', 1, 2),
-('Second Conversation', 1, 3);
+INSERT INTO conversation (conversation_name) 
+VALUES ('First Conversation'),
+('Second Conversation');
+
+DELETE from participant;
+
+INSERT INTO participant (conversation_id, contact_id)
+VALUES (1, 1),
+(1, 2),
+(2, 1),
+(2, 3);
 
 DELETE from message;
 
