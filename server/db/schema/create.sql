@@ -1,6 +1,7 @@
 DROP TABLE IF EXISTS conversation CASCADE;
 DROP TABLE IF EXISTS message CASCADE;
 DROP TABLE IF EXISTS contact CASCADE;
+DROP TABLE IF EXISTS participant CASCADE;
 -- DROP TABLE IF EXISTS group_member CASCADE;
 
 -- Might need to adjust password hash length from 255, as hash might be more then this!
@@ -17,9 +18,13 @@ CREATE TABLE contact (
 -- Must determine if we want conversation name to be mandatory or not, would be good for groups but not for individual conversations
 CREATE TABLE conversation (
   id SERIAL PRIMARY KEY NOT NULL,
-  conversation_name VARCHAR(250),
-  member_1 INTEGER REFERENCES contact(id) NOT NULL,
-  member_2 INTEGER REFERENCES contact(id) NOT NULL
+  conversation_name VARCHAR(250)
+);
+
+CREATE TABLE participant (
+  id SERIAL PRIMARY KEY NOT NULL,
+  conversation_id INTEGER REFERENCES conversation(id) ON DELETE CASCADE,
+  contact_id INTEGER REFERENCES contact(id) ON DELETE CASCADE
 );
 
 CREATE TABLE message (
