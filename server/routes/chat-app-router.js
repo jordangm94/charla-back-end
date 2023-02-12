@@ -15,22 +15,41 @@ module.exports = (db, actions) => {
     res.send('Hello from the CHAT APP!');
   });
 
-  //This route is used to load the profile picture and last message received from each user in the chat list. This information also used in loading searched users (name and profile picture), which also uses the chatlistitem.
-  router.get('/chat/list', validateToken, (req, res) => {
+  // This route is used to load the profile picture and last message received from each user in the chat list. This information also used in loading searched users (name and profile picture), which also uses the chatlistitem.
+  router.get('/chat/list/message', validateToken, (req, res) => {
     //Used DISTINCT ON to remove duplicate rows of conversation_id (i.e. multiple messages belonging to convo ID) and only show 1 message for each conversation ID in the ChatList component.
     const contact = req.contact;
 
     db.query(
-      `SELECT DISTINCT ON (conversation.id) conversation_id, conversation_name, member_1, member_2, message.id AS message_id, message_text, contact.id AS contact_id, contact.first_name, contact.last_name, contact.profile_photo_url, contact.email
+      `SELECT DISTINCT ON (participant.conversation_id) participant.conversation_id, conversation_name, message.id AS message_id, message_text
 
-      FROM conversation JOIN message ON conversation.id = conversation_id JOIN contact ON contact_id = contact.id
+      FROM participant JOIN conversation ON participant.conversation_id = conversation.id JOIN message ON conversation.id = message.conversation_id
       
-      WHERE member_1 = $1 OR member_2 = $1
+      WHERE participant.contact_id = $1
       
-      ORDER BY conversation.id DESC, message.id DESC;
+      ORDER BY conversation_id DESC, message.id DESC;
       `, [contact.id]
     ).then(({ rows }) => {
+      console.log(rows);
       res.json(rows);
+    });
+  });
+
+  router.get('/chat/list/profile', validateToken, (req, res) => {
+    const contact = req.contact;
+    const conversationID = req.query.conversationID;
+
+    db.query(
+      `SELECT participant.contact_id
+
+      FROM participant JOIN conversation ON conversation_id = conversation.id
+
+      WHERE conversation_id = $1
+
+      AND participant.contact_id != $2
+      `, [conversationID, contact.id]
+    ).then(({ rows }) => {
+      res.json(rows[0]);
     });
   });
 
@@ -62,7 +81,7 @@ module.exports = (db, actions) => {
     `, [conversationId])
       .then(({ rows }) => {
         // res.json(rows);
-      res.json( {rows, id: contact.id});
+        res.json({ rows, id: contact.id });
       });
   });
 
