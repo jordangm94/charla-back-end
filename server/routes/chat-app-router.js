@@ -85,10 +85,11 @@ module.exports = (db, actions) => {
   });
   
   router.post('/messagesubmission', (req, res) => {
-    console.log('Hello from your new MESSAGE REQ', req)
+    const messageSubmitted = req.body.messageSubmitted
+    // console.log('Hello from your new MESSAGE REQ', req.body)
 
     db.query(`INSERT INTO message (contact_id, message_text, sent_datetime, conversation_id)
-    VALUES (1, 'Hello from your input message testing', NOW(), 1)
+    VALUES (1, '${messageSubmitted}', NOW(), 1)
   `)
   .then(({ rows }) => {
     // res.json(rows);
