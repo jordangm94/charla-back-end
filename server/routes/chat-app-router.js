@@ -87,7 +87,7 @@ module.exports = (db, actions) => {
   router.post('/messagesubmission', validateToken, (req, res) => {
     const messageSubmitted = req.body.messageSubmitted;
     const contact = req.contact.id;
-    const convoID = req.contact.convoID;
+    const convoID = req.body.convoID;
     console.log('Hello from the backend here is your req.body', messageSubmitted, contact, convoID)
 
     db.query(`INSERT INTO message (contact_id, message_text, sent_datetime, conversation_id)
