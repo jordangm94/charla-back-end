@@ -83,6 +83,20 @@ module.exports = (db, actions) => {
         res.json({ rows, id: contact.id });
       });
   });
+  
+  router.post('/messagesubmission', (req, res) => {
+    console.log('Hello from your new MESSAGE REQ', req)
+
+    db.query(`INSERT INTO message (contact_id, message_text, sent_datetime, conversation_id)
+    VALUES (1, 'Hello from your input message testing', NOW(), 1)
+  `)
+  .then(({ rows }) => {
+    // res.json(rows);
+    res.json({ rows });
+  });
+
+
+  })
 
   router.post('/register', (req, res) => {
     const { firstName, lastName, username, email, password } = req.body;
