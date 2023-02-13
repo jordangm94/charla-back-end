@@ -30,7 +30,6 @@ module.exports = (db, actions) => {
       ORDER BY conversation_id DESC, message.id DESC;
       `, [contact.id]
     ).then(({ rows }) => {
-      console.log(rows);
       res.json(rows);
     });
   });
