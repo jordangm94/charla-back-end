@@ -83,22 +83,23 @@ module.exports = (db, actions) => {
         res.json({ rows, id: contact.id });
       });
   });
-  
+
   router.post('/messagesubmission', validateToken, (req, res) => {
     const messageSubmitted = req.body.messageSubmitted;
     const contact = req.contact.id;
     const convoID = req.contact.convoID;
+    console.log('Hello from the backend here is your req.body', messageSubmitted, contact, convoID)
 
     db.query(`INSERT INTO message (contact_id, message_text, sent_datetime, conversation_id)
-    VALUES (${contact}, '${messageSubmitted}', NOW(), ${convoID})
-  `)
-  .then(({ rows }) => {
-    // res.json(rows);
-    res.json({ rows });
+    VALUES ($1, $2, NOW(), $3);
+  `, [contact, messageSubmitted, convoID])
+      .then(({ rows }) => {
+        // res.json(rows);
+        res.json({ rows });
+      });
+
+
   });
-
-
-  })
 
   router.post('/register', (req, res) => {
     const { firstName, lastName, username, email, password } = req.body;
