@@ -84,12 +84,13 @@ module.exports = (db, actions) => {
       });
   });
   
-  router.post('/messagesubmission', (req, res) => {
-    const messageSubmitted = req.body.messageSubmitted
-    // console.log('Hello from your new MESSAGE REQ', req.body)
+  router.post('/messagesubmission', validateToken, (req, res) => {
+    const messageSubmitted = req.body.messageSubmitted;
+    const contact = req.contact.id;
+    const convoID = req.contact.convoID;
 
     db.query(`INSERT INTO message (contact_id, message_text, sent_datetime, conversation_id)
-    VALUES (1, '${messageSubmitted}', NOW(), 1)
+    VALUES (${contact}, '${messageSubmitted}', NOW(), ${convoID})
   `)
   .then(({ rows }) => {
     // res.json(rows);
