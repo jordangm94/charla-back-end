@@ -138,5 +138,10 @@ module.exports = (db, actions) => {
     return res.json({ error: null, auth: false });
   });
 
+  router.get("/loggedin", validateToken, (req, res) => {
+    const loggedInUser = req.contact;
+    return res.json({ loggedInUser });
+  });
+
   return router;
 };
