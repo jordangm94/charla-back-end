@@ -55,15 +55,17 @@ module.exports = (db, actions) => {
   //This route is used for live searching for a user within the database using the search bar
   router.get('/searchuser', (req, res) => {
     const searchUserInput = `%${req.query.searchedUser}%`;
-    console.log('Hello from searchUserInput', searchUserInput);
+
     db.query(
       `SELECT id, first_name, last_name, profile_photo_url
     
       FROM contact
      
-      WHERE LOWER(first_name) LIKE
-     
-      LOWER($1);
+      WHERE LOWER(first_name) LIKE LOWER($1)
+
+      OR LOWER(last_name) LIKE LOWER($1)
+
+      OR LOWER(user_name) LIKE LOWER($1)
       `, [searchUserInput]
     ).then(({ rows }) => {
       return res.json(rows);
@@ -88,7 +90,7 @@ module.exports = (db, actions) => {
     const messageSubmitted = req.body.messageSubmitted;
     const contact = req.contact.id;
     const convoID = req.body.convoID;
-    console.log('Hello from the backend here is your req.body', messageSubmitted, contact, convoID)
+    console.log('Hello from the backend here is your req.body', messageSubmitted, contact, convoID);
 
     db.query(`INSERT INTO message (contact_id, message_text, sent_datetime, conversation_id)
     VALUES ($1, $2, NOW(), $3);
