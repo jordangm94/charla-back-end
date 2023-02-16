@@ -53,20 +53,19 @@ module.exports = (db, actions) => {
   });
 
   //This route is used for live searching for a user within the database using the search bar
-  router.get('/searchuser', (req, res) => {
+  router.get('/searchuser', validateToken, (req, res) => {
     const searchUserInput = `%${req.query.searchedUser}%`;
+    const contact = req.contact;
 
     db.query(
       `SELECT id, first_name, last_name, profile_photo_url
     
       FROM contact
+
+      WHERE id != $2
      
-      WHERE LOWER(first_name) LIKE LOWER($1)
-
-      OR LOWER(last_name) LIKE LOWER($1)
-
-      OR LOWER(user_name) LIKE LOWER($1)
-      `, [searchUserInput]
+      AND (LOWER(first_name) LIKE LOWER($1) OR LOWER(last_name) LIKE LOWER($1) OR LOWER(user_name) LIKE LOWER($1))
+      `, [searchUserInput, contact.id]
     ).then(({ rows }) => {
       return res.json(rows);
     });
