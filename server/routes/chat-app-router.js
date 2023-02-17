@@ -101,22 +101,22 @@ module.exports = (db, actions) => {
   });
 
   router.post('/newconversation', validateToken, (req, res) => {
-    const loggedInUser = req.contact.id; //Contains YOUR user ID if you are logged in
+    const loggedInUserID = req.contact.id; //Contains the ID of the user who is logged in
     const contactYouAreStartingAConvoWith = req.body.contactid
 
-    console.log('Hello from logged in contact and contact you are starting convo with', loggedInUser, contactYouAreStartingAConvoWith)
+    console.log('Hello from logged in contact and contact you are starting convo with', loggedInUserID, contactYouAreStartingAConvoWith)
 
     db.query(`
     INSERT INTO conversation (conversation_name)
-    VALUES ('Conversation between user ${loggedInUser} and ${contactYouAreStartingAConvoWith}');
+    VALUES ('Conversation between user ${loggedInUserID} and ${contactYouAreStartingAConvoWith}');
 
     INSERT INTO participant (conversation_id, contact_id)
-    VALUES((SELECT LAST_VALUE("id") OVER (ORDER BY "id" DESC) FROM conversation LIMIT 1), ${loggedInUser}),
+    VALUES((SELECT LAST_VALUE("id") OVER (ORDER BY "id" DESC) FROM conversation LIMIT 1), ${loggedInUserID}),
     ((SELECT LAST_VALUE("id") OVER (ORDER BY "id" DESC) FROM conversation LIMIT 1), ${contactYouAreStartingAConvoWith});
   `)
       .then(({ rows }) => {
         // res.json(rows);
-        res.json({ rows });
+        res.json({ rows, id: loggedInUserID });
       });
   });
   
