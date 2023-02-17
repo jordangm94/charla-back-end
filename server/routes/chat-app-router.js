@@ -101,12 +101,14 @@ module.exports = (db, actions) => {
   });
 
   router.post('/newconversation', validateToken, (req, res) => {
-    const contact = req.contact.id;
-    console.log(contact)
-    
-    db.query(`INSERT INTO  ()
-    VALUES ();
-  `, [])
+    const loggedInUser = req.contact.id; //Contains YOUR user ID if you are logged in
+    const contactYouAreStartingAConvoWith = req.body.contactid
+
+    console.log('Hello from logged in contact and contact you are starting convo with', loggedInUser, contactYouAreStartingAConvoWith)
+
+    db.query(`INSERT INTO conversation  (conversation_name)
+    VALUES ('new conversation');
+  `)
       .then(({ rows }) => {
         // res.json(rows);
         res.json({ rows });
