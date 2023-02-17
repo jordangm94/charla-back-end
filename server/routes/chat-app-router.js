@@ -111,8 +111,8 @@ module.exports = (db, actions) => {
     VALUES ('Conversation between user ${loggedInUser} and ${contactYouAreStartingAConvoWith}');
 
     INSERT INTO participant (conversation_id, contact_id)
-    VALUES((SELECT LAST_VALUE("id") OVER (ORDER BY "id") FROM conversation LIMIT 1), ${loggedInUser}),
-    ((SELECT LAST_VALUE("id") OVER (ORDER BY "id") FROM conversation LIMIT 1), ${contactYouAreStartingAConvoWith});
+    VALUES((SELECT LAST_VALUE("id") OVER (ORDER BY "id" DESC) FROM conversation LIMIT 1), ${loggedInUser}),
+    ((SELECT LAST_VALUE("id") OVER (ORDER BY "id" DESC) FROM conversation LIMIT 1), ${contactYouAreStartingAConvoWith});
   `)
       .then(({ rows }) => {
         // res.json(rows);
