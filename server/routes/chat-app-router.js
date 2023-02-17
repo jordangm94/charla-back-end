@@ -106,8 +106,13 @@ module.exports = (db, actions) => {
 
     console.log('Hello from logged in contact and contact you are starting convo with', loggedInUser, contactYouAreStartingAConvoWith)
 
-    db.query(`INSERT INTO conversation  (conversation_name)
-    VALUES ('new conversation');
+    db.query(`
+    INSERT INTO conversation (conversation_name)
+    VALUES ('Conversation between user ${loggedInUser} and ${contactYouAreStartingAConvoWith}');
+
+    INSERT INTO participant (conversation_id, contact_id)
+    VALUES(BLANK, ${loggedInUser}),
+    (BLANK, ${contactYouAreStartingAConvoWith});
   `)
       .then(({ rows }) => {
         // res.json(rows);
