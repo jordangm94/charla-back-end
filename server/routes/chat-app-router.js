@@ -98,9 +98,21 @@ module.exports = (db, actions) => {
         // res.json(rows);
         res.json({ rows });
       });
-
-
   });
+
+  router.post('/newconversation', validateToken, (req, res) => {
+    const contact = req.contact.id;
+    console.log(contact)
+    
+    db.query(`INSERT INTO  ()
+    VALUES ();
+  `, [])
+      .then(({ rows }) => {
+        // res.json(rows);
+        res.json({ rows });
+      });
+  });
+  
 
   router.post('/register', (req, res) => {
     const { firstName, lastName, username, email, password } = req.body;
