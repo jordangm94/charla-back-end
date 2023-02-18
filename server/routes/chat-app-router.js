@@ -85,6 +85,24 @@ module.exports = (db, actions) => {
       });
   });
 
+  //This route is used after the /newconversation post route, it takes both the logged in user id and contact ID and uses them to get the conversation with both users
+  router.get('/getthenewconversation', (req, res) => {
+    console.log('HI FROM REQ', req.query)
+    const loggedInUserID = req.query.id
+    const contactYouAreStartingAConvoWith = req.query.contactid
+
+    db.query(`
+    SELECT conversation.id AS conversation_id 
+    FROM conversation JOIN participant ON conversation.id = conversation_id
+    WHERE (participant.contact_id = 1) 
+    AND (participant.contact_id = 3);
+    `)
+      .then(({ rows }) => {
+        // res.json(rows);
+        res.json({ rows });
+      });
+  });
+
   router.post('/messagesubmission', validateToken, (req, res) => {
     const messageSubmitted = req.body.messageSubmitted;
     const contact = req.contact.id;
