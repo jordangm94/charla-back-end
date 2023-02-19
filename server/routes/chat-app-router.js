@@ -129,8 +129,8 @@ module.exports = (db, actions) => {
     VALUES((SELECT LAST_VALUE("id") OVER (ORDER BY "id" DESC) FROM conversation LIMIT 1), ${loggedInUserID}),
     ((SELECT LAST_VALUE("id") OVER (ORDER BY "id" DESC) FROM conversation LIMIT 1), ${contactYouAreStartingAConvoWith});
 
-    INSERT INTO message(message_text, sent_datetime, conversation_id)
-    VALUES('You have now started a conversation with ${contactFirstName} ${contactLastName}.', NOW(), (SELECT LAST_VALUE("id") OVER (ORDER BY "id" DESC) FROM conversation LIMIT 1));
+    INSERT INTO message(contact_id, message_text, sent_datetime, conversation_id)
+    VALUES(5, 'You have now started a conversation with ${contactFirstName} ${contactLastName}.', NOW(), (SELECT LAST_VALUE("id") OVER (ORDER BY "id" DESC) FROM conversation LIMIT 1));
   `)
       .then(({ rows }) => {
         // res.json(rows);
