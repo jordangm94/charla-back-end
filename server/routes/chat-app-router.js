@@ -128,6 +128,9 @@ module.exports = (db, actions) => {
     INSERT INTO participant (conversation_id, contact_id)
     VALUES((SELECT LAST_VALUE("id") OVER (ORDER BY "id" DESC) FROM conversation LIMIT 1), ${loggedInUserID}),
     ((SELECT LAST_VALUE("id") OVER (ORDER BY "id" DESC) FROM conversation LIMIT 1), ${contactYouAreStartingAConvoWith});
+
+    INSERT INTO message(message_text, sent_datetime, conversation_id)
+    VALUES('You have now started a conversation with user ${contactYouAreStartingAConvoWith}', NOW(), (SELECT LAST_VALUE("id") OVER (ORDER BY "id" DESC) FROM conversation LIMIT 1));
   `)
       .then(({ rows }) => {
         // res.json(rows);
