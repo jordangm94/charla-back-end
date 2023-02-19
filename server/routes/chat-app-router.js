@@ -117,9 +117,9 @@ module.exports = (db, actions) => {
 
   router.post('/newconversation', validateToken, (req, res) => {
     const loggedInUserID = req.contact.id; //Contains the ID of the user who is logged in
-    const contactYouAreStartingAConvoWith = req.body.contactid
-
-    console.log('Hello from logged in contact and contact you are starting convo with', loggedInUserID, contactYouAreStartingAConvoWith)
+    const contactYouAreStartingAConvoWith = req.body.contactid;
+    const contactFirstName = req.body.firstName;
+    const contactLastName = req.body.lastName;
 
     db.query(`
     INSERT INTO conversation (conversation_name)
@@ -130,7 +130,7 @@ module.exports = (db, actions) => {
     ((SELECT LAST_VALUE("id") OVER (ORDER BY "id" DESC) FROM conversation LIMIT 1), ${contactYouAreStartingAConvoWith});
 
     INSERT INTO message(message_text, sent_datetime, conversation_id)
-    VALUES('You have now started a conversation with user ${contactYouAreStartingAConvoWith}', NOW(), (SELECT LAST_VALUE("id") OVER (ORDER BY "id" DESC) FROM conversation LIMIT 1));
+    VALUES('You have now started a conversation with ${contactFirstName} ${contactLastName}.', NOW(), (SELECT LAST_VALUE("id") OVER (ORDER BY "id" DESC) FROM conversation LIMIT 1));
   `)
       .then(({ rows }) => {
         // res.json(rows);
