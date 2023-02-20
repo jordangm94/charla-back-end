@@ -10,8 +10,8 @@ VALUES ('Jordan', 'Guerrero Martinez', 'jordangm94', 'jordan.guerrero.martinez@g
 DELETE from conversation;
 
 INSERT INTO conversation (conversation_name) 
-VALUES ('First Conversation'),
-('Second Conversation');
+VALUES ('Conversation between user 1 and 2'),
+('Conversation between user 1 and 3');
 
 DELETE from participant;
 

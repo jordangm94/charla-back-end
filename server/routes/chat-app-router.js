@@ -89,6 +89,7 @@ module.exports = (db, actions) => {
   router.get('/getthenewconversation', validateToken, (req, res) => {
     const loggedInUserID = req.contact.id;
     const contactYouAreStartingAConvoWith = req.query.contactid;
+    console.log('HELLO FROM SUNDAY WORK', loggedInUserID, contactYouAreStartingAConvoWith)
 
     db.query(`
     SELECT conversation.id AS conversation_id 
