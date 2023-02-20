@@ -135,7 +135,7 @@ module.exports = (db, actions) => {
   //Important note, upon deployment if database is adjsuted and admin user is changed, we must change the number 5 in insert query.
       .then(({ rows }) => {
         // res.json(rows);
-        res.json({ rows, id: loggedInUserID });
+        res.json({ rows });
       });
   });
   
