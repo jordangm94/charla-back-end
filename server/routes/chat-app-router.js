@@ -140,6 +140,14 @@ module.exports = (db, actions) => {
       });
   });
   
+  router.delete('/deleteparticipant', validateToken, (req, res) => {
+    db.query(`
+    DELETE FROM participant
+    WHERE contact_id = 1;`)
+    .then(({ rows }) => {
+      res.json({ rows })
+    })
+  })
 
   router.post('/register', (req, res) => {
     const { firstName, lastName, username, email, password } = req.body;
