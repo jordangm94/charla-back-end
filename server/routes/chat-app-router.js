@@ -89,7 +89,7 @@ module.exports = (db, actions) => {
   router.get('/getthenewconversation', validateToken, (req, res) => {
     const loggedInUserID = req.contact.id;
     const contactYouAreStartingAConvoWith = req.query.contactid;
-    console.log('HELLO FROM SUNDAY WORK', loggedInUserID, contactYouAreStartingAConvoWith)
+    console.log('HELLO FROM SUNDAY WORK', loggedInUserID, contactYouAreStartingAConvoWith);
 
     db.query(`
     SELECT conversation.id AS conversation_id 
@@ -133,21 +133,21 @@ module.exports = (db, actions) => {
     INSERT INTO message(contact_id, message_text, sent_datetime, conversation_id)
     VALUES(5, 'You have now started a conversation with ${contactFirstName} ${contactLastName}.', NOW(), (SELECT LAST_VALUE("id") OVER (ORDER BY "id" DESC) FROM conversation LIMIT 1)); 
   `)
-  //Important note, upon deployment if database is adjsuted and admin user is changed, we must change the number 5 in insert query.
+      //Important note, upon deployment if database is adjsuted and admin user is changed, we must change the number 5 in insert query.
       .then(({ rows }) => {
         // res.json(rows);
         res.json({ rows });
       });
   });
-  
+
   router.delete('/deleteparticipant', validateToken, (req, res) => {
     db.query(`
     DELETE FROM participant
     WHERE contact_id = 1;`)
-    .then(({ rows }) => {
-      res.json({ rows })
-    })
-  })
+      .then(({ rows }) => {
+        res.json({ rows });
+      });
+  });
 
   router.post('/register', (req, res) => {
     const { firstName, lastName, username, email, password } = req.body;
@@ -206,6 +206,34 @@ module.exports = (db, actions) => {
   router.get("/loggedin", validateToken, (req, res) => {
     const loggedInUser = req.contact;
     return res.json({ loggedInUser });
+  });
+
+  router.post('/feedback', (req, res) => {
+    const { fullName, feedback } = req.body;
+
+    db.query(`
+    INSERT INTO feedback (full_name, message)
+    VALUES ($1, $2); 
+  `, [fullName, feedback])
+      .then(({ rows }) => {
+        return res.json(rows);
+      })
+      .catch(error => {
+        return res.status(400).json({ error });
+      });
+  });
+
+  router.get('/feedback', (req, res) => {
+    db.query(`
+    SELECT *
+    FROM feedback; 
+  `)
+      .then(({ rows }) => {
+        return res.json(rows);
+      })
+      .catch(error => {
+        return res.status(400).json({ error });
+      });
   });
 
   return router;
