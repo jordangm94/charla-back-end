@@ -2,6 +2,7 @@ DROP TABLE IF EXISTS conversation CASCADE;
 DROP TABLE IF EXISTS message CASCADE;
 DROP TABLE IF EXISTS contact CASCADE;
 DROP TABLE IF EXISTS participant CASCADE;
+DROP TABLE IF EXISTS feedback CASCADE;
 -- DROP TABLE IF EXISTS group_member CASCADE;
 
 -- Might need to adjust password hash length from 255, as hash might be more then this!
@@ -34,6 +35,12 @@ CREATE TABLE message (
   sent_datetime VARCHAR(255) NOT NULL, 
   conversation_id INTEGER REFERENCES conversation(id) ON DELETE CASCADE
 );
+
+CREATE TABLE feedback (
+  id SERIAL PRIMARY KEY NOT NULL,
+  full_name VARCHAR(255) NOT NULL,
+  message VARCHAR(2000) NOT NULL 
+)
 
 -- CREATE TABLE group_member (
 --   id SERIAL PRIMARY KEY NOT NULL,
