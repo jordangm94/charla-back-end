@@ -101,6 +101,22 @@ module.exports = (db, actions) => {
       });
   });
 
+  //This route will be accessed in the chat input component, before a message is sent a get request ensures that both indivduals are participants in that conversation before allowing user input in that conversation (this is for the case where a participant has closed a convo, which removes them from that convo. Therefore whenr eopening need to add them back).
+  router.get('/participantspresent', validateToken, (req, res) => {
+    const loggedInUserID = req.contact.id
+    const convoID = req.query.convoID;
+
+    console.log('Hello from your contact ID and and CONVO ID in your participantspresent route', loggedInUserID, convoID)
+
+    db.query(`
+    SELECT contact_id FROM participant WHERE conversation_id = ${convoID}
+    `)
+    .then(({ rows }) => {
+      res.json({ rows, loggedInUserID: loggedInUserID });
+    })
+
+  });
+
   router.post('/messagesubmission', validateToken, (req, res) => {
     const messageSubmitted = req.body.messageSubmitted;
     const contact = req.contact.id;
