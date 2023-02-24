@@ -114,7 +114,20 @@ module.exports = (db, actions) => {
     .then(({ rows }) => {
       res.json({ rows, loggedInUserID: loggedInUserID });
     })
+  });
 
+  router.post('/addparticipantbacktoconvo', validateToken, (req, res) => {
+    const loggedInUserID = req.contact.id
+    const convoID = req.body.convoID;
+
+    console.log('HELLO FROM THE CONVOID in the add participant back route', convoID)
+
+    db.query(`INSERT INTO participant (conversation_id, contact_id) VALUES (${convoID}, ${loggedInUserID} )
+    `)
+    .then(({ rows }) => {
+      // res.json(rows);
+      res.json({ rows });
+    });
   });
 
   router.post('/messagesubmission', validateToken, (req, res) => {
