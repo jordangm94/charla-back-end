@@ -107,9 +107,14 @@ module.exports = (db, actions) => {
     const convoID = req.query.convoID;
 
     console.log('Hello from your contact ID and and CONVO ID in your participantspresent route', loggedInUserID, convoID)
-
+    
+    // SELECT message.contact_id AS message_contact_id_always_not_null, participant.contact_id AS participant_contact_id_sometimes_null
+    // FROM participant JOIN conversation ON conversation_id = conversation.id JOIN message ON conversation.id = message.conversation_id
+    // WHERE participant.conversation_id = 1  AND message.contact_id = 
+    // LIMIT 2;
+    
     db.query(`
-    SELECT contact_id FROM participant WHERE conversation_id = ${convoID}
+    // SELECT contact_id FROM participant WHERE conversation_id = ${convoID}
     `)
     .then(({ rows }) => {
       res.json({ rows, loggedInUserID: loggedInUserID });
