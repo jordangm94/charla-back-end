@@ -94,7 +94,7 @@ module.exports = (db, actions) => {
     db.query(`
     SELECT conversation.id AS conversation_id 
     FROM conversation 
-    WHERE conversation_name = 'Conversation between user ${loggedInUserID} and ${contactYouAreStartingAConvoWith}'
+    WHERE conversation_name = 'Conversation between user ${loggedInUserID} and ${contactYouAreStartingAConvoWith}';
     `)
       .then(({ rows }) => {
         res.json({ rows });
@@ -114,7 +114,7 @@ module.exports = (db, actions) => {
     // LIMIT 2;
     
     db.query(`
-    // SELECT contact_id FROM participant WHERE conversation_id = ${convoID}
+    SELECT contact_id FROM participant WHERE conversation_id = ${convoID}
     `)
     .then(({ rows }) => {
       res.json({ rows, loggedInUserID: loggedInUserID });
@@ -127,7 +127,7 @@ module.exports = (db, actions) => {
 
     console.log('HELLO FROM THE CONVOID in the add participant back route', convoID)
 
-    db.query(`INSERT INTO participant (conversation_id, contact_id) VALUES (${convoID}, ${loggedInUserID} )
+    db.query(`INSERT INTO participant (conversation_id, contact_id) VALUES (${convoID}, ${loggedInUserID});
     `)
     .then(({ rows }) => {
       // res.json(rows);
