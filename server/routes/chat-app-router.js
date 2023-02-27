@@ -103,36 +103,36 @@ module.exports = (db, actions) => {
 
   //This route will be accessed in the chat input component, before a message is sent a get request ensures that both indivduals are participants in that conversation before allowing user input in that conversation (this is for the case where a participant has closed a convo, which removes them from that convo. Therefore whenr eopening need to add them back).
   router.get('/participantspresent', validateToken, (req, res) => {
-    const loggedInUserID = req.contact.id
+    const loggedInUserID = req.contact.id;
     const convoID = req.query.convoID;
 
-    console.log('Hello from your contact ID and and CONVO ID in your participantspresent route', loggedInUserID, convoID)
-    
+    console.log('Hello from your contact ID and and CONVO ID in your participantspresent route', loggedInUserID, convoID);
+
     // SELECT message.contact_id AS message_contact_id_always_not_null, participant.contact_id AS participant_contact_id_sometimes_null
     // FROM participant JOIN conversation ON conversation_id = conversation.id JOIN message ON conversation.id = message.conversation_id
     // WHERE participant.conversation_id = 1  AND message.contact_id = 1;
     // LIMIT 2;
-    
+
     db.query(`
     SELECT contact_id FROM participant WHERE conversation_id = ${convoID}
     `)
-    .then(({ rows }) => {
-      res.json({ rows, loggedInUserID: loggedInUserID });
-    })
+      .then(({ rows }) => {
+        res.json({ rows, loggedInUserID: loggedInUserID });
+      });
   });
 
   router.post('/addparticipantbacktoconvo', validateToken, (req, res) => {
-    const loggedInUserID = req.contact.id
+    const loggedInUserID = req.contact.id;
     const convoID = req.body.convoID;
 
-    console.log('HELLO FROM THE CONVOID in the add participant back route', convoID)
+    console.log('HELLO FROM THE CONVOID in the add participant back route', convoID);
 
     db.query(`INSERT INTO participant (conversation_id, contact_id) VALUES (${convoID}, ${loggedInUserID});
     `)
-    .then(({ rows }) => {
-      // res.json(rows);
-      res.json({ rows });
-    });
+      .then(({ rows }) => {
+        // res.json(rows);
+        res.json({ rows });
+      });
   });
 
   router.post('/messagesubmission', validateToken, (req, res) => {
