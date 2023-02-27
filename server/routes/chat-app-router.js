@@ -41,11 +41,13 @@ module.exports = (db, actions) => {
     db.query(
       `SELECT contact.id, first_name, last_name, profile_photo_url
 
-      FROM participant JOIN conversation ON conversation_id = conversation.id JOIN contact ON participant.contact_id = contact.id
+      FROM contact JOIN message ON contact.id  = message.contact_id
 
       WHERE conversation_id = $1
 
-      AND participant.contact_id != $2
+      AND message.contact_id != $2
+
+      LIMIT 1
       `, [conversationID, contact.id]
     ).then(({ rows }) => {
       res.json(rows[0]);
