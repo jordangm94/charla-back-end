@@ -127,7 +127,7 @@ module.exports = (db, actions) => {
 
     console.log('HELLO FROM THE CONVOID in the add participant back route', convoID);
 
-    db.query(`INSERT INTO participant (conversation_id, contact_id) VALUES (${convoID}, ${loggedInUserID});
+    db.query(`INSERT INTO participant (conversation_id, contact_id) VALUES (${convoID.conversation_id}, ${loggedInUserID});
     `)
       .then(({ rows }) => {
         // res.json(rows);
