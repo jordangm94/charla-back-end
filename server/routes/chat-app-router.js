@@ -110,7 +110,7 @@ module.exports = (db, actions) => {
     
     // SELECT message.contact_id AS message_contact_id_always_not_null, participant.contact_id AS participant_contact_id_sometimes_null
     // FROM participant JOIN conversation ON conversation_id = conversation.id JOIN message ON conversation.id = message.conversation_id
-    // WHERE participant.conversation_id = 1  AND message.contact_id = 
+    // WHERE participant.conversation_id = 1  AND message.contact_id = 1;
     // LIMIT 2;
     
     db.query(`
