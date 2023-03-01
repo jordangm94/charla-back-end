@@ -177,7 +177,7 @@ module.exports = (db, actions) => {
     ((SELECT LAST_VALUE("id") OVER (ORDER BY "id" DESC) FROM conversation LIMIT 1), ${contactYouAreStartingAConvoWith});
 
     INSERT INTO message(contact_id, message_text, sent_datetime, conversation_id)
-    VALUES(5, 'You have now started a conversation with ${contactFirstName} ${contactLastName}.', NOW(), (SELECT LAST_VALUE("id") OVER (ORDER BY "id" DESC) FROM conversation LIMIT 1)); 
+    VALUES(5, 'A conversation has started between ${req.contact.firstName} ${req.contact.lastName} and ${contactFirstName} ${contactLastName}.', NOW(), (SELECT LAST_VALUE("id") OVER (ORDER BY "id" DESC) FROM conversation LIMIT 1)); 
   `)
       //Important note, upon deployment if database is adjsuted and admin user is changed, we must change the number 5 in insert query.
       .then(({ rows }) => {
