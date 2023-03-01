@@ -39,18 +39,28 @@ module.exports = (db, actions) => {
     const conversationID = req.query.conversationID;
 
     db.query(
-      `SELECT contact.id, first_name, last_name, profile_photo_url
+      `SELECT conversation_name
 
-      FROM contact JOIN message ON contact.id  = message.contact_id
+      FROM conversation
 
-      WHERE conversation_id = $1
-
-      AND message.contact_id != $2
+      WHERE conversation.id = $1
 
       LIMIT 1
-      `, [conversationID, contact.id]
+      `, [conversationID]
     ).then(({ rows }) => {
-      res.json(rows[0]);
+      const otherUserID = rows[0].conversation_name.slice(26, 27) !== `${contact.id}` ? (+rows[0].conversation_name.slice(26, 27)) : (+rows[0].conversation_name.slice(32, 33));
+
+      db.query(
+        `SELECT contact.id, first_name, last_name, profile_photo_url
+        
+        FROM contact
+
+        WHERE contact.id = $1
+        `, [otherUserID]
+      )
+        .then(({ rows }) => {
+          res.json(rows[0]);
+        });
     });
   });
 
