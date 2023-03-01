@@ -201,7 +201,7 @@ module.exports = (db, actions) => {
           return res.status(400).json({ error: "Username exists", message: "This username has already been taken!" });
         } else {
           const hashedPassword = bcrypt.hashSync(password, 10);
-          registerContact(db, firstName, lastName, username, email, hashedPassword).then(contact => {
+          registerContact(db, firstName, lastName, username, email, hashedPassword, "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png").then(contact => {
             const accessToken = createToken(contact);
 
             req.session.accessToken = accessToken;
