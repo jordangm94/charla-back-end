@@ -106,7 +106,8 @@ module.exports = (db, actions) => {
     db.query(`
     SELECT conversation.id AS conversation_id 
     FROM conversation 
-    WHERE conversation_name = 'Conversation between user ${loggedInUserID} and ${contactYouAreStartingAConvoWith}';
+    WHERE conversation_name = 'Conversation between user ${loggedInUserID} and ${contactYouAreStartingAConvoWith}'
+    OR conversation_name = 'Conversation between user ${contactYouAreStartingAConvoWith} and ${loggedInUserID}';
     `)
       .then(({ rows }) => {
         res.json({ rows });
