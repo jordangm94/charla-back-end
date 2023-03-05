@@ -60,6 +60,14 @@ function registerContact(db, firstName, lastName, username, email, hashedPasswor
     });
 };
 
+io.on("connection", (socket) => {
+  console.log(socket.id);
+
+  socket.on("disconnect", () => {
+    console.log("User disconnected", socket.id);
+  });
+});
+
 server.listen(PORT, () => {
   console.log(`Listening on port ${PORT} in ${ENV} mode.`);
 });
