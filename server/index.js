@@ -3,6 +3,7 @@ const ENV = require("./environment");
 
 const app = require("./application")(ENV, { getContactByEmail, getContactByUsername, registerContact });
 const { Server } = require("socket.io");
+const { cookieSessionMiddleware, wrap } = require("./serverController");
 
 const server = require("http").Server(app);
 
@@ -60,8 +61,11 @@ function registerContact(db, firstName, lastName, username, email, hashedPasswor
     });
 };
 
+io.use(wrap(cookieSessionMiddleware));
+
 io.on("connection", (socket) => {
   console.log(`User Connected: ${socket.id}`);
+  console.log(socket.request.session.accessToken);
 
   socket.on("disconnect", () => {
     console.log(`User Disconnected ${socket.id}`);

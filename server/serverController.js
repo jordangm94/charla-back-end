@@ -5,4 +5,6 @@ const cookieSessionMiddleware = cookieSession({
   keys: [process.env.SESSIONKEYONE, process.env.SESSIONKEYTWO]
 });
 
-module.exports = { cookieSessionMiddleware };
+const wrap = expressMiddleware => (socket, next) => expressMiddleware(socket.request, {}, next);
+
+module.exports = { cookieSessionMiddleware, wrap };
