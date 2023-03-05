@@ -2,7 +2,16 @@ const PORT = process.env.PORT || 8001;
 const ENV = require("./environment");
 
 const app = require("./application")(ENV, { getContactByEmail, getContactByUsername, registerContact });
+const { Server } = require("socket.io");
+
 const server = require("http").Server(app);
+
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:3000",
+    method: ["GET", "POST"]
+  }
+});
 
 function getContactByEmail(db, email) {
   const queryString = `
