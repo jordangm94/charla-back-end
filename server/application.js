@@ -5,7 +5,7 @@ const express = require("express");
 const bodyparser = require("body-parser");
 const helmet = require("helmet");
 const cors = require("cors");
-const { cookieSessionMiddleware } = require("./serverController");
+const cookieSession = require("cookie-session");
 
 const app = express();
 const db = require("./db");
@@ -38,7 +38,10 @@ module.exports = function application(
   app.use(cors({ credentials: true, origin: true }));
   app.use(helmet());
   app.use(bodyparser.json());
-  app.use(cookieSessionMiddleware);
+  app.use(cookieSession({
+    name: 'session',
+    keys: [process.env.SESSIONKEYONE, process.env.SESSIONKEYTWO]
+  }));
 
   app.use("/api", routes(db, actions));
 

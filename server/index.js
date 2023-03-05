@@ -65,7 +65,7 @@ io.use(wrap(cookieSessionMiddleware));
 
 io.on("connection", (socket) => {
   console.log(`User Connected: ${socket.id}`);
-  console.log(socket.request.session.accessToken);
+  console.log(socket.request.session);
 
   socket.on("disconnect", () => {
     console.log(`User Disconnected ${socket.id}`);
