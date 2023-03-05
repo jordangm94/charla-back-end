@@ -3,9 +3,10 @@ const ENV = require("./environment");
 
 const app = require("./application")(ENV, { getContactByEmail, getContactByUsername, registerContact });
 const { Server } = require("socket.io");
-const { cookieSessionMiddleware, wrap } = require("./serverController");
 
 const server = require("http").Server(app);
+const cookieParser = require("socket.io-cookie-parser");
+const socketioJwt = require("socket.io");
 
 const io = new Server(server, {
   cors: {
