@@ -5,8 +5,7 @@ const app = require("./application")(ENV, { getContactByEmail, getContactByUsern
 const { Server } = require("socket.io");
 
 const server = require("http").Server(app);
-const cookieParser = require("socket.io-cookie-parser");
-const socketioJwt = require("socket.io");
+const { verify } = require("jsonwebtoken");
 
 const io = new Server(server, {
   cors: {
@@ -62,11 +61,40 @@ function registerContact(db, firstName, lastName, username, email, hashedPasswor
     });
 };
 
-io.use(wrap(cookieSessionMiddleware));
+// io.use((socket, next) => {
+//   const req = socket.handshake;
+
+//   const cookies = cookieParser.parse(req.headers.cookie);
+
+//   const session = cookieSession({
+//     keys: [process.env.SESSIONKEYONE, process.env.SESSIONKEYTWO],
+//     name: 'session'
+//   })(req, {}, () => { });
+
+//   socket.session = session;
+
+//   next();
+// });
+
+// io.use((socket, next) => {
+//   const token = socket.token;
+//   if (token) {
+//     verify(token, process.env.JWTSECRET, (err, decoded) => {
+//       if (err) {
+//         return next(new Error('JWT validation error'));
+//       }
+
+//       socket.user = decoded;
+//       next();
+//     });
+//   } else {
+//     next(new Error('Authentication error'));
+//   }
+// });
 
 io.on("connection", (socket) => {
   console.log(`User Connected: ${socket.id}`);
-  console.log(socket.request.session);
+  console.log('Session ID:', socket.session);
 
   socket.on("disconnect", () => {
     console.log(`User Disconnected ${socket.id}`);
