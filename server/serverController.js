@@ -13,6 +13,4 @@ const sessionMiddleware = session({
   }
 });
 
-const wrap = expressMiddleware => (socket, next) => expressMiddleware(socket.request, {}, next);
-
-module.export = { sessionMiddleware, wrap };
+module.exports = { sessionMiddleware };

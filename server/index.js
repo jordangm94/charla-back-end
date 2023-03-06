@@ -5,12 +5,14 @@ const app = require("./application")(ENV, { getContactByEmail, getContactByUsern
 const { Server } = require("socket.io");
 
 const server = require("http").Server(app);
-const { verify } = require("jsonwebtoken");
+const { sessionMiddleware } = require("./serverController");
+const sharedSession = require("express-socket.io-session");
 
 const io = new Server(server, {
   cors: {
     origin: ["http://localhost:3000", "http://localhost:3001", "http://localhost:3002"],
-    method: ["GET", "POST"]
+    method: ["GET", "POST"],
+    credentials: true
   }
 });
 
@@ -61,9 +63,11 @@ function registerContact(db, firstName, lastName, username, email, hashedPasswor
     });
 };
 
+io.use(sharedSession(sessionMiddleware));
+
 io.on("connection", (socket) => {
   console.log(`User Connected: ${socket.id}`);
-  console.log('Session ID:', socket.session);
+  console.log('Session ID:', socket.handshake.session);
 
   socket.on("disconnect", () => {
     console.log(`User Disconnected ${socket.id}`);
