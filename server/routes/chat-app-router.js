@@ -250,7 +250,7 @@ module.exports = (db, actions) => {
   });
 
   router.post("/logout", validateToken, (req, res) => {
-    req.session = null;
+    req.session.destroy();
     return res.json({ error: null, auth: false });
   });
 

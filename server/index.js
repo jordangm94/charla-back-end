@@ -61,37 +61,6 @@ function registerContact(db, firstName, lastName, username, email, hashedPasswor
     });
 };
 
-// io.use((socket, next) => {
-//   const req = socket.handshake;
-
-//   const cookies = cookieParser.parse(req.headers.cookie);
-
-//   const session = cookieSession({
-//     keys: [process.env.SESSIONKEYONE, process.env.SESSIONKEYTWO],
-//     name: 'session'
-//   })(req, {}, () => { });
-
-//   socket.session = session;
-
-//   next();
-// });
-
-// io.use((socket, next) => {
-//   const token = socket.token;
-//   if (token) {
-//     verify(token, process.env.JWTSECRET, (err, decoded) => {
-//       if (err) {
-//         return next(new Error('JWT validation error'));
-//       }
-
-//       socket.user = decoded;
-//       next();
-//     });
-//   } else {
-//     next(new Error('Authentication error'));
-//   }
-// });
-
 io.on("connection", (socket) => {
   console.log(`User Connected: ${socket.id}`);
   console.log('Session ID:', socket.session);
