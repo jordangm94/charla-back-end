@@ -5,12 +5,11 @@ const express = require("express");
 const bodyparser = require("body-parser");
 const helmet = require("helmet");
 const cors = require("cors");
-const session = require("express-session");
-const client = require("./db/index");
-const pgSession = require("connect-pg-simple")(session);
 
 const app = express();
 const db = require("./db");
+
+const { sessionMiddleware } = require("./serverController");
 
 const routes = require("./routes/chat-app-router");
 
@@ -41,16 +40,7 @@ module.exports = function application(
   app.use(helmet());
   app.use(bodyparser.json());
 
-  app.use(session({
-    store: new pgSession({ client }),
-    secret: process.env.SESSION_KEY,
-    saveUninitialized: false,
-    resave: false,
-    cookie: {
-      httpOnly: true,
-      maxAge: parseInt(process.env.SESSION_MAX_AGE)
-    }
-  }));
+  app.use(sessionMiddleware);
 
   app.use("/api", routes(db, actions));
 
