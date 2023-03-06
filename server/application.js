@@ -6,6 +6,8 @@ const bodyparser = require("body-parser");
 const helmet = require("helmet");
 const cors = require("cors");
 const session = require("express-session");
+const client = require("./db/index");
+const pgSession = require("connect-pg-simple")(session);
 
 const app = express();
 const db = require("./db");
@@ -38,9 +40,11 @@ module.exports = function application(
   app.use(cors({ credentials: true, origin: true }));
   app.use(helmet());
   app.use(bodyparser.json());
+
   app.use(session({
+    store: new pgSession({ client }),
     secret: process.env.SESSION_KEY,
-    saveUninitialized: true,
+    saveUninitialized: false,
     resave: false,
     cookie: {
       httpOnly: true,
