@@ -2,6 +2,7 @@ const { request, response } = require('express');
 const express = require('express');
 const router = express.Router();
 const bcrypt = require("bcryptjs");
+const { v4: uuidv4 } = require("uuid");
 const { createToken, validateToken } = require("../JWT");
 
 /////////////////////////////////

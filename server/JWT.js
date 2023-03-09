@@ -2,7 +2,7 @@ const { sign, verify } = require("jsonwebtoken");
 
 const createToken = (contact) => {
   const accessToken = sign(
-    { id: contact.id, email: contact.email, username: contact.user_name, firstName: contact.first_name, lastName: contact.last_name },
+    { id: contact.id, email: contact.email, username: contact.user_name, firstName: contact.first_name, lastName: contact.last_name, userIDSocket: contact.user_id_socket },
     process.env.JWT_SECRET
   );
 
