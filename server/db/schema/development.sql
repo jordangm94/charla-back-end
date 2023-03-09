@@ -1,11 +1,11 @@
 DELETE from contact;
 
-INSERT INTO contact (first_name, last_name, user_name, email, password_hash, profile_photo_url)
-VALUES ('Jordan', 'Guerrero Martinez', 'jordangm94', 'jordan.guerrero.martinez@gmail.com', '$2a$10$CfPpYSDuhZRoEwkLCMqZjuKJ8rLk3mKcS.vYWLIdxrYH4kOMrCaky', 'https://avatars.githubusercontent.com/u/111808635?v=4'),
-('Jae Yun', 'Jeong', 'alex94', 'jeongalex0616@gmail.com', '$2a$10$CfPpYSDuhZRoEwkLCMqZjuKJ8rLk3mKcS.vYWLIdxrYH4kOMrCaky', 'https://avatars.githubusercontent.com/u/109401369?v=4'),
-('Alessia', 'G', 'AlessiaG94', 'Alessiag94@gmail.com', '$2a$10$CfPpYSDuhZRoEwkLCMqZjuKJ8rLk3mKcS.vYWLIdxrYH4kOMrCaky', 'https://media.istockphoto.com/id/1311084168/photo/overjoyed-pretty-asian-woman-look-at-camera-with-sincere-laughter.jpg?b=1&s=170667a&w=0&k=20&c=XPuGhP9YyCWquTGT-tUFk6TwI-HZfOr1jNkehKQ17g0='),
-('Jose', 'M', 'joseM94', 'jose94@gmail.com', '$2a$10$CfPpYSDuhZRoEwkLCMqZjuKJ8rLk3mKcS.vYWLIdxrYH4kOMrCaky', 'https://t4.ftcdn.net/jpg/02/24/86/95/360_F_224869519_aRaeLneqALfPNBzg0xxMZXghtvBXkfIA.jpg'),
-('Charla', 'Admin', 'charlaadmin', 'charlaadmin@gmail.com', '$2a$10$CfPpYSDuhZRoEwkLCMqZjuKJ8rLk3mKcS.vYWLIdxrYH4kOMrCaky', 'https://e7.pngegg.com/pngimages/82/448/png-clipart-computer-technician-logo-illustration-system-administrator-database-administrator-computer-icons-administration-miscellaneous-computer-network-thumbnail.png');
+INSERT INTO contact (first_name, last_name, user_name, email, password_hash, profile_photo_url, user_id_socket)
+VALUES ('Jordan', 'Guerrero Martinez', 'jordangm94', 'jordan.guerrero.martinez@gmail.com', '$2a$10$CfPpYSDuhZRoEwkLCMqZjuKJ8rLk3mKcS.vYWLIdxrYH4kOMrCaky', 'https://avatars.githubusercontent.com/u/111808635?v=4', 'CFJbUzl7YGtDz0q8AAAB'),
+('Jae Yun', 'Jeong', 'alex94', 'jeongalex0616@gmail.com', '$2a$10$CfPpYSDuhZRoEwkLCMqZjuKJ8rLk3mKcS.vYWLIdxrYH4kOMrCaky', 'https://avatars.githubusercontent.com/u/109401369?v=4', '6FswBNWAeLbATDmkAAAB'),
+('Alessia', 'G', 'AlessiaG94', 'Alessiag94@gmail.com', '$2a$10$CfPpYSDuhZRoEwkLCMqZjuKJ8rLk3mKcS.vYWLIdxrYH4kOMrCaky', 'https://media.istockphoto.com/id/1311084168/photo/overjoyed-pretty-asian-woman-look-at-camera-with-sincere-laughter.jpg?b=1&s=170667a&w=0&k=20&c=XPuGhP9YyCWquTGT-tUFk6TwI-HZfOr1jNkehKQ17g0=', 'wvvS9mJVyAdaglOVAAAJ'),
+('Jose', 'M', 'joseM94', 'jose94@gmail.com', '$2a$10$CfPpYSDuhZRoEwkLCMqZjuKJ8rLk3mKcS.vYWLIdxrYH4kOMrCaky', 'https://t4.ftcdn.net/jpg/02/24/86/95/360_F_224869519_aRaeLneqALfPNBzg0xxMZXghtvBXkfIA.jpg', 'VwHusH7kU2N3TRVoAAAB'),
+('Charla', 'Admin', 'charlaadmin', 'charlaadmin@gmail.com', '$2a$10$CfPpYSDuhZRoEwkLCMqZjuKJ8rLk3mKcS.vYWLIdxrYH4kOMrCaky', 'https://e7.pngegg.com/pngimages/82/448/png-clipart-computer-technician-logo-illustration-system-administrator-database-administrator-computer-icons-administration-miscellaneous-computer-network-thumbnail.png', 'AF4YAYMWYXqdkl2FAAAB');
 
 DELETE from conversation;
 
