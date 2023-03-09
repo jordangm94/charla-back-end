@@ -69,7 +69,7 @@ io.use(authorizeUser);
 
 io.on("connection", (socket) => {
   console.log(`User Connected: ${socket.id}`);
-  console.log('Session ID:', socket.handshake.session);
+  console.log('Session ID:', socket.handshake.session.accessToken);
 
   socket.on("disconnect", () => {
     console.log(`User Disconnected ${socket.id}`);
