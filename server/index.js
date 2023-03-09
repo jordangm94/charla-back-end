@@ -7,6 +7,7 @@ const { Server } = require("socket.io");
 const server = require("http").Server(app);
 const { sessionMiddleware } = require("./serverController");
 const sharedSession = require("express-socket.io-session");
+const { authorizeUser } = require("./socketController");
 
 const io = new Server(server, {
   cors: {
@@ -64,6 +65,7 @@ function registerContact(db, firstName, lastName, username, email, hashedPasswor
 };
 
 io.use(sharedSession(sessionMiddleware));
+io.use(authorizeUser);
 
 io.on("connection", (socket) => {
   console.log(`User Connected: ${socket.id}`);
