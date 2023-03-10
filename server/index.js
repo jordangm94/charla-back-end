@@ -8,6 +8,7 @@ const server = require("http").Server(app);
 const { sessionMiddleware } = require("./serverController");
 const sharedSession = require("express-socket.io-session");
 const { authorizeUser } = require("./socketController");
+const jwt = require("jsonwebtoken");
 
 const io = new Server(server, {
   cors: {
@@ -65,6 +66,18 @@ function registerContact(db, firstName, lastName, username, email, hashedPasswor
 };
 
 io.use(sharedSession(sessionMiddleware));
+io.use((socket, next) => {
+  const token = socket.handshake.session.accessToken;
+
+  jwt.verify(token, process.env.JWT_SECRET, (error, decoded) => {
+    if (error) {
+      return next(new Error('Unauthorized'));
+    }
+
+    socket.decoded = decoded;
+    next();
+  });
+});
 io.use(authorizeUser);
 
 io.on("connection", (socket) => {
