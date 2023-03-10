@@ -18,3 +18,7 @@ module.exports.authorizeUser = (socket, next) => {
     next();
   }
 };
+
+module.exports.newConvo = socket => {
+
+};
