@@ -102,14 +102,18 @@ module.exports = (db, actions) => {
   router.get('/getthenewconversation', validateToken, (req, res) => {
     const loggedInUserID = req.contact.id;
     const contactYouAreStartingAConvoWith = req.query.contactid;
+
+    const conditionOne = `Conversation between user ${loggedInUserID} and ${contactYouAreStartingAConvoWith}`;
+    const conditionTwo = `Conversation between user ${contactYouAreStartingAConvoWith} and ${loggedInUserID}`;
+
     console.log('HELLO FROM SUNDAY WORK', loggedInUserID, contactYouAreStartingAConvoWith);
 
     db.query(`
     SELECT conversation.id AS conversation_id 
     FROM conversation 
-    WHERE conversation_name = 'Conversation between user ${loggedInUserID} and ${contactYouAreStartingAConvoWith}'
-    OR conversation_name = 'Conversation between user ${contactYouAreStartingAConvoWith} and ${loggedInUserID}';
-    `)
+    WHERE conversation_name = $1
+    OR conversation_name = $2;
+    `, [conditionOne, conditionTwo])
       .then(({ rows }) => {
         res.json({ rows });
       });

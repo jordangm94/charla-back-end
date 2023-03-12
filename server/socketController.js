@@ -21,5 +21,5 @@ module.exports.authorizeUser = (socket, next) => {
 
 module.exports.newConvo = (otherContact, callback) => {
   console.log(otherContact);
-  cb({ done: true });
+  callback({ done: true });
 };
