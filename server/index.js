@@ -68,12 +68,14 @@ io.use(sharedSession(sessionMiddleware));
 io.use(authorizeUser);
 
 io.on("connection", (socket) => {
-  console.log(`User Connected: ${socket.decoded.userIDSocket}`);
+  console.log(`User Connected: ${socket.user.userIDSocket}`);
 
-  socket.on("new_convo", newConvo);
+  socket.on("new_convo", (otherContact, callback) => {
+    newConvo(socket, otherContact, callback);
+  });
 
   socket.on("disconnect", () => {
-    console.log(`User Disconnected ${socket.decoded.userIDSocket}`);
+    console.log(`User Disconnected ${socket.user.userIDSocket}`);
   });
 });
 

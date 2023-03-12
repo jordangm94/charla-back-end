@@ -106,8 +106,6 @@ module.exports = (db, actions) => {
     const conditionOne = `Conversation between user ${loggedInUserID} and ${contactYouAreStartingAConvoWith}`;
     const conditionTwo = `Conversation between user ${contactYouAreStartingAConvoWith} and ${loggedInUserID}`;
 
-    console.log('HELLO FROM SUNDAY WORK', loggedInUserID, contactYouAreStartingAConvoWith);
-
     db.query(`
     SELECT conversation.id AS conversation_id 
     FROM conversation 
