@@ -19,6 +19,7 @@ module.exports.authorizeUser = (socket, next) => {
   }
 };
 
-module.exports.newConvo = socket => {
-
+module.exports.newConvo = (otherContact, callback) => {
+  console.log(otherContact);
+  cb({ done: true });
 };
