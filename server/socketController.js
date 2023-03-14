@@ -41,9 +41,9 @@ module.exports.newConvo = async (socket, otherContact, callback) => {
   }
 
   const otherContactSocketId = await db.query(`
-  SELECT user_id_socket
-  FROM contact
-  WHERE id = $1
+  SELECT socket_id
+  FROM socket
+  WHERE contact_id = $1
   `, [otherContact.contactid]);
 
   const data = await db.query(`
@@ -72,8 +72,7 @@ module.exports.newConvo = async (socket, otherContact, callback) => {
       ORDER BY message.id DESC
 
       LIMIT 1;
-      `, [data[0].rows[0].id]
-    );
+      `, [data[0].rows[0].id]);
 
     const otherProfile = await db.query(
       `SELECT conversation_name
@@ -99,9 +98,11 @@ module.exports.newConvo = async (socket, otherContact, callback) => {
 
     chatListData.contact = otherProfile;
 
-    console.log(otherContactSocketId.rows[0].user_id_socket);
-    socket.to(otherContactSocketId).emit('new_convo', chatListData);
-    console.log('emitted');
+    if (otherContactSocketId) {
+      console.log(otherContactSocketId.rows[0].socket_id);
+      socket.to(otherContactSocketId.rows[0].socket_id).emit('new_convo', chatListData);
+    }
+
     return;
   }
 };
