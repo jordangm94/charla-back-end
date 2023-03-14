@@ -2,7 +2,6 @@ const { request, response } = require('express');
 const express = require('express');
 const router = express.Router();
 const bcrypt = require("bcryptjs");
-const { v4: uuidv4 } = require("uuid");
 const { createToken, validateToken } = require("../JWT");
 
 /////////////////////////////////
@@ -215,7 +214,7 @@ module.exports = (db, actions) => {
           return res.status(400).json({ error: "Username exists", message: "This username has already been taken!" });
         } else {
           const hashedPassword = bcrypt.hashSync(password, 10);
-          registerContact(db, firstName, lastName, username, email, hashedPassword, "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png", uuidv4()).then(contact => {
+          registerContact(db, firstName, lastName, username, email, hashedPassword, "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png", "hello").then(contact => {
             const accessToken = createToken(contact);
 
             req.session.accessToken = accessToken;
@@ -248,6 +247,7 @@ module.exports = (db, actions) => {
   });
 
   router.post("/authenticate", validateToken, (req, res) => {
+    console.log('test');
     const authenticated = req.authenticated;
     return res.json({ authenticated });
   });
