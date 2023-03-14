@@ -84,16 +84,18 @@ module.exports.newConvo = async (socket, otherContact, callback) => {
       LIMIT 1
       `, [data[0].rows[0].id]
     ).then(({ rows }) => {
-      const otherUserID = rows[0].conversation_name.slice(26, 27) !== `${socket.user.id}` ? (+rows[0].conversation_name.slice(26, 27)) : (+rows[0].conversation_name.slice(32, 33));
+      if (rows[0] && rows[0].conversation_name) {
+        const otherUserID = rows[0].conversation_name.slice(26, 27) !== `${socket.user.id}` ? (+rows[0].conversation_name.slice(26, 27)) : (+rows[0].conversation_name.slice(32, 33));
 
-      db.query(
-        `SELECT contact.id, first_name, last_name, profile_photo_url
-
-        FROM contact
-
-        WHERE contact.id = $1
-        `, [otherUserID]
-      );
+        db.query(
+          `SELECT contact.id, first_name, last_name, profile_photo_url
+  
+          FROM contact
+  
+          WHERE contact.id = $1
+          `, [otherUserID]
+        );
+      }
     });
 
     chatListData.contact = otherProfile;

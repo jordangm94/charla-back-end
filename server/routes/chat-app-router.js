@@ -48,19 +48,20 @@ module.exports = (db, actions) => {
       LIMIT 1
       `, [conversationID]
     ).then(({ rows }) => {
-      const otherUserID = rows[0].conversation_name.slice(26, 27) !== `${contact.id}` ? (+rows[0].conversation_name.slice(26, 27)) : (+rows[0].conversation_name.slice(32, 33));
-
-      db.query(
-        `SELECT contact.id, first_name, last_name, profile_photo_url
-        
-        FROM contact
-
-        WHERE contact.id = $1
-        `, [otherUserID]
-      )
-        .then(({ rows }) => {
-          res.json(rows[0]);
-        });
+      if (rows[0] && rows[0].conversation_name) {
+        const otherUserID = rows[0].conversation_name.slice(26, 27) !== `${contact.id}` ? (+rows[0].conversation_name.slice(26, 27)) : (+rows[0].conversation_name.slice(32, 33));
+        db.query(
+          `SELECT contact.id, first_name, last_name, profile_photo_url
+          
+          FROM contact
+  
+          WHERE contact.id = $1
+          `, [otherUserID]
+        )
+          .then(({ rows }) => {
+            res.json(rows[0]);
+          });
+      }
     });
   });
 
