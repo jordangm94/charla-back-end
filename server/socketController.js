@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const db = require("./db");
 
-module.exports.authorizeUser = (socket, next) => {
+module.exports.authorizeUser = async (socket, next) => {
   if (!socket.handshake.session.accessToken) {
     console.log("Bad request!");
     next(new Error("Not authorized"));
@@ -18,6 +18,20 @@ module.exports.authorizeUser = (socket, next) => {
     socket.user = { ...socket.decoded };
     next();
   }
+};
+
+module.exports.initializeUser = socket => {
+  db.query(`
+    INSERT INTO socket (socket_id, contact_id)
+    VALUES ($1, $2);
+    `, [socket.id, socket.user.id]);
+};
+
+module.exports.closeUser = socket => {
+  db.query(`
+  DELETE FROM socket
+  WHERE contact_id = $1;
+  `, [socket.user.id]);
 };
 
 module.exports.newConvo = async (socket, otherContact, callback) => {
@@ -47,6 +61,47 @@ module.exports.newConvo = async (socket, otherContact, callback) => {
 
   if (data) {
     callback({ done: true, data: data[0].rows[0] });
+
+    const chatListData = await db.query(
+      `SELECT message.conversation_id, message.id AS message_id, message_text, message.contact_id AS message_owner_id
+
+      FROM message
+
+      WHERE message.conversation_id = $1
+
+      ORDER BY message.id DESC
+
+      LIMIT 1;
+      `, [data[0].rows[0].id]
+    );
+
+    const otherProfile = await db.query(
+      `SELECT conversation_name
+
+      FROM conversation
+
+      WHERE conversation.id = $1
+
+      LIMIT 1
+      `, [data[0].rows[0].id]
+    ).then(({ rows }) => {
+      const otherUserID = rows[0].conversation_name.slice(26, 27) !== `${socket.user.id}` ? (+rows[0].conversation_name.slice(26, 27)) : (+rows[0].conversation_name.slice(32, 33));
+
+      db.query(
+        `SELECT contact.id, first_name, last_name, profile_photo_url
+
+        FROM contact
+
+        WHERE contact.id = $1
+        `, [otherUserID]
+      );
+    });
+
+    chatListData.contact = otherProfile;
+
+    console.log(otherContactSocketId.rows[0].user_id_socket);
+    socket.to(otherContactSocketId).emit('new_convo', chatListData);
+    console.log('emitted');
     return;
   }
 };
