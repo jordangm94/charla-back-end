@@ -100,7 +100,7 @@ module.exports.newConvo = async (socket, otherContact, callback) => {
 
     chatListData.contact = otherProfile;
 
-    if (otherContactSocketId) {
+    if (otherContactSocketId.rows[0]) {
       console.log(otherContactSocketId.rows[0].socket_id);
       socket.to(otherContactSocketId.rows[0].socket_id).emit('new_convo', chatListData);
     }
