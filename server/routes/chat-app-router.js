@@ -137,18 +137,34 @@ module.exports = (db, actions) => {
       });
   });
 
+  router.get('/amipresent', validateToken, (req, res) => {
+    const loggedInUserID = req.contact.id;
+    const convoID = req.query.convoID.conversation_id;
+
+    console.log('working 1', convoID);
+
+    db.query(`
+    SELECT *
+    FROM participant
+    WHERE conversation_id = $1
+    AND contact_id = $2;
+    `, [convoID, loggedInUserID])
+      .then(({ rows }) => {
+        res.json(rows[0]);
+      });
+  });
+
   router.post('/addparticipantbacktoconvo', validateToken, (req, res) => {
     const loggedInUserID = req.contact.id;
     const convoID = req.body.convoID;
 
     console.log('HELLO FROM THE CONVOID in the add participant back route', convoID);
 
-    db.query(`INSERT INTO participant (conversation_id, contact_id) VALUES (${convoID.conversation_id}, ${loggedInUserID});
-    `)
-      .then(({ rows }) => {
-        // res.json(rows);
-        res.json({ rows });
-      });
+    // db.query(`INSERT INTO participant (conversation_id, contact_id) VALUES (${convoID}, ${loggedInUserID});
+    // `)
+    //   .then(({ rows }) => {
+    //     res.json(rows);
+    //   });
   });
 
   router.post('/messagesubmission', validateToken, (req, res) => {

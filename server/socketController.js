@@ -108,3 +108,18 @@ module.exports.newConvo = async (socket, otherContact, callback) => {
     return;
   }
 };
+
+module.exports.newMessage = async (socket, otherContact, callback) => {
+  if (socket.user.id === otherContact.contactid) {
+    callback({ done: false, error: "Cannot send a message to yourself" });
+    return;
+  }
+
+  const otherContactSocketId = await db.query(`
+  SELECT socket_id
+  FROM socket
+  WHERE contact_id = $1
+  `, [otherContact.contactid]);
+
+  
+};
