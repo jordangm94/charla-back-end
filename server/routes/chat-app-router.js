@@ -137,7 +137,21 @@ module.exports = (db, actions) => {
       });
   });
 
-  router.post('/addparticipantbacktoconvo', validateToken, (req, res) => {
+  router.post('/addloggedinuserbacktoconvo', validateToken, (req, res) => {
+    const loggedInUserID = req.contact.id;
+    const convoID = req.body.convoID;
+
+    console.log('HELLO FROM THE CONVOID in the add participant back route', convoID);
+
+    db.query(`INSERT INTO participant (conversation_id, contact_id) VALUES (${convoID.conversation_id}, ${loggedInUserID});
+    `)
+      .then(({ rows }) => {
+        // res.json(rows);
+        res.json({ rows });
+      });
+  });
+
+  router.post('/addcontactyouaretalkingtobacktoconvo', validateToken, (req, res) => {
     const loggedInUserID = req.contact.id;
     const convoID = req.body.convoID;
 
