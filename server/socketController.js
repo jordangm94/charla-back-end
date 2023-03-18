@@ -100,11 +100,26 @@ module.exports.newConvo = async (socket, otherContact, callback) => {
 
     chatListData.contact = otherProfile;
 
-    if (otherContactSocketId) {
+    if (otherContactSocketId.rows[0]) {
       console.log(otherContactSocketId.rows[0].socket_id);
       socket.to(otherContactSocketId.rows[0].socket_id).emit('new_convo', chatListData);
     }
 
     return;
   }
+};
+
+module.exports.newMessage = async (socket, otherContact, callback) => {
+  if (socket.user.id === otherContact.contactid) {
+    callback({ done: false, error: "Cannot send a message to yourself" });
+    return;
+  }
+
+  const otherContactSocketId = await db.query(`
+  SELECT socket_id
+  FROM socket
+  WHERE contact_id = $1
+  `, [otherContact.contactid]);
+
+  
 };
