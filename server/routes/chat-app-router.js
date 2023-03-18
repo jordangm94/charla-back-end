@@ -136,24 +136,6 @@ module.exports = (db, actions) => {
         res.json({ rows, loggedInUserID: loggedInUserID });
       });
   });
-
-  router.get('/amipresent', validateToken, (req, res) => {
-    const loggedInUserID = req.contact.id;
-    const convoID = req.query.convoID.conversation_id;
-
-    console.log('working 1', convoID);
-
-    db.query(`
-    SELECT *
-    FROM participant
-    WHERE conversation_id = $1
-    AND contact_id = $2;
-    `, [convoID, loggedInUserID])
-      .then(({ rows }) => {
-        res.json(rows[0]);
-      });
-  });
-
   
   router.post('/addloggedinuserbacktoconvo', validateToken, (req, res) => {
     const loggedInUserID = req.contact.id;
@@ -169,7 +151,6 @@ module.exports = (db, actions) => {
   });
 
   // router.post('/addcontactyouaretalkingtobacktoconvo', validateToken, (req, res) => {s
-  
   
     router.get('/amipresent', validateToken, (req, res) => {
     const loggedInUserID = req.contact.id;
@@ -188,6 +169,7 @@ module.exports = (db, actions) => {
       });
   });
 
+  //The route we will use to add the contact you are speaking with back to the convo after they have left.
   router.post('/addparticipantbacktoconvo', validateToken, (req, res) => {
     const loggedInUserID = req.contact.id;
     const convoID = req.body.convoID;
