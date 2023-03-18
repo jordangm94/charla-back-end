@@ -136,23 +136,25 @@ module.exports = (db, actions) => {
         res.json({ rows, loggedInUserID: loggedInUserID });
       });
   });
-  
+
   router.post('/addloggedinuserbacktoconvo', validateToken, (req, res) => {
     const loggedInUserID = req.contact.id;
     const convoID = req.body.convoID;
 
     console.log('HELLO FROM THE CONVOID in the add participant back route', convoID);
 
-    db.query(`INSERT INTO participant (conversation_id, contact_id) VALUES (${convoID}, ${loggedInUserID});
-    `)
+    db.query(`
+    INSERT INTO participant (conversation_id, contact_id)
+    VALUES ($1, $2);
+    `, [convoID.conversation_id, loggedInUserID])
       .then(({ rows }) => {
         res.json(rows);
       });
   });
 
   // router.post('/addcontactyouaretalkingtobacktoconvo', validateToken, (req, res) => {s
-  
-    router.get('/amipresent', validateToken, (req, res) => {
+
+  router.get('/amipresent', validateToken, (req, res) => {
     const loggedInUserID = req.contact.id;
     const convoID = req.query.convoID.conversation_id;
 
