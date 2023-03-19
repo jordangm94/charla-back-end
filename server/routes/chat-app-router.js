@@ -151,6 +151,22 @@ module.exports = (db, actions) => {
       });
   });
 
+  //This route receives the correct contact ID of the individual who closed a conversation on their end who you are trying to message, and adds them back to the convo in the process of messaging them.
+  router.post('/addparticipantwholeftbacktoconvo', validateToken, (req, res) => {
+    const contactID = req.body.contactID
+    const convoID = req.body.convoID;
+
+    console.log('HELLO FROM THE CONVOID and the CONTACT ID of the individual who left', convoID, contactID);
+
+    db.query(`
+    INSERT INTO participant (conversation_id, contact_id)
+    VALUES ($1, $2);
+    `, [convoID, contactID])
+      .then(({ rows }) => {
+        res.json(rows);
+      });
+  });
+
   router.post('/addloggedinuserbacktoconvo', validateToken, (req, res) => {
     const loggedInUserID = req.contact.id;
     const convoID = req.body.convoID;
@@ -165,8 +181,6 @@ module.exports = (db, actions) => {
         res.json(rows);
       });
   });
-
-  // router.post('/addcontactyouaretalkingtobacktoconvo', validateToken, (req, res) => {s
 
   router.get('/amipresent', validateToken, (req, res) => {
     const loggedInUserID = req.contact.id;
