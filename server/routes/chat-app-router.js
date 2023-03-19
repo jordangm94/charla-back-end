@@ -137,6 +137,20 @@ module.exports = (db, actions) => {
       });
   });
 
+  //This route is used specifically when you are messaging an individual who has closed your existing conversation on their end and we need to add them back to the convo. First start by getting that individuals contact ID from conversation_name.
+  router.get('/useconvoIDtogetcontactID', validateToken, (req, res) => {
+    const convoID = req.query.convoID;
+
+    console.log('Hello from your CONVO ID trying to fix leave participant conversation', convoID);
+
+    db.query(`
+    SELECT conversation_name FROM conversation WHERE conversation.id = ${convoID}
+    `)
+      .then(({ rows }) => {
+        res.json({ rows });
+      });
+  });
+
   router.post('/addloggedinuserbacktoconvo', validateToken, (req, res) => {
     const loggedInUserID = req.contact.id;
     const convoID = req.body.convoID;
