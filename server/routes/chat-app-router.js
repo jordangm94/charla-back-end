@@ -357,42 +357,47 @@ module.exports = (db, actions) => {
     const loggedInUser = 1;
     db.query(`
     SELECT conversation.id AS conversation_id, 
-  conversation.conversation_name AS name, 
-  contact.id AS other_participant_id, 
-  contact.first_name AS other_participant_first_name, 
-  contact.last_name AS other_participant_last_name, 
-  contact.user_name AS other_participant_user_name, 
-  contact.email AS other_participant_email, 
-  contact.profile_photo_url AS other_participant_profile_photo_url, 
-  message.id AS message_id, 
-  message.contact_id AS sender_contact_id, 
-  message.message_text AS message_text, 
-  message.sent_datetime AS sent_datetime,
-  MAX(message.sent_datetime) OVER (PARTITION BY conversation.id) AS lastActivityDatetime
-FROM conversation 
-  INNER JOIN participant ON conversation.id = participant.conversation_id 
-  INNER JOIN contact ON participant.contact_id = contact.id 
-  LEFT JOIN (
-    SELECT *
-    FROM message
-    ORDER BY sent_datetime ASC
-  ) AS message ON conversation.id = message.conversation_id
-WHERE conversation.id IN (
-  SELECT conversation_id
-  FROM participant
-  WHERE contact_id = $1
-)
-AND contact.id != $1
-GROUP BY conversation.id, conversation.conversation_name, contact.id, contact.first_name, contact.last_name, contact.user_name, contact.email, contact.profile_photo_url, message.id, message.contact_id, message.message_text, message.sent_datetime
-ORDER BY lastActivityDatetime DESC, message.id ASC;
+    conversation.conversation_name AS name, 
+    contact.id AS other_participant_id, 
+    contact.first_name AS other_participant_first_name, 
+    contact.last_name AS other_participant_last_name, 
+    contact.user_name AS other_participant_user_name, 
+    contact.email AS other_participant_email, 
+    contact.profile_photo_url AS other_participant_profile_photo_url, 
+    message.id AS message_id, 
+    message.contact_id AS sender_contact_id, 
+    message.message_text AS message_text, 
+    message.sent_datetime AS sent_datetime,
+    MAX(message.sent_datetime) OVER (PARTITION BY conversation.id) AS last_activity_datetime
+    FROM conversation 
+    INNER JOIN participant ON conversation.id = participant.conversation_id 
+    INNER JOIN contact ON participant.contact_id = contact.id 
+    LEFT JOIN (
+      SELECT *
+      FROM message
+      WHERE message.id IN (
+        SELECT MAX(id)
+        FROM message
+        GROUP BY conversation_id
+      )
+    ) AS message ON conversation.id = message.conversation_id
+    WHERE conversation.id IN (
+      SELECT conversation_id
+      FROM participant
+      WHERE contact_id = $1
+    )
+    AND contact.id != $1
+    GROUP BY conversation.id, conversation.conversation_name, contact.id, contact.first_name, contact.last_name, contact.user_name, contact.email, contact.profile_photo_url, message.id, message.contact_id, message.message_text, message.sent_datetime
+    ORDER BY last_activity_datetime DESC, message.id ASC;    
   `, [loggedInUser])
       .then(({ rows }) => {
+        console.log(rows);
         const conversations = [];
         let currentConversationId;
         let currentConversation;
 
         rows.forEach(row => {
-          const { conversation_id, name, lastactivitydatetime } = row;
+          const { conversation_id, name, last_activity_datetime } = row;
 
           // If the current row belongs to a new conversation, create a new conversation object
           if (conversation_id !== currentConversationId) {
@@ -407,20 +412,17 @@ ORDER BY lastActivityDatetime DESC, message.id ASC;
                 email: row.other_participant_email,
                 profilePhotoUrl: row.other_participant_profile_photo_url,
               },
-              messages: [],
-              lastactivitydatetime,
+              lastMessage: {
+                id: row.message_id,
+                senderContactId: row.sender_contact_id,
+                messageText: row.message_text,
+                sentDatetime: row.sent_datetime,
+              },
+              last_activity_datetime,
             };
             conversations.push(currentConversation);
             currentConversationId = conversation_id;
           }
-
-          // Add the message to the current conversation's messages array
-          currentConversation.messages.push({
-            id: row.message_id,
-            senderContactId: row.sender_contact_id,
-            messageText: row.message_text,
-            sentDatetime: row.sent_datetime,
-          });
         });
         res.json(conversations);
       });
