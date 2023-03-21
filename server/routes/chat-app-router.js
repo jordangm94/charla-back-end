@@ -353,8 +353,8 @@ module.exports = (db, actions) => {
       });
   });
 
-  router.get('/datatest', (req, res) => {
-    const loggedInUser = 1;
+  router.get('/datatest', validateToken, (req, res) => {
+    const loggedInUser = req.contact;
     db.query(`
     SELECT conversation.id AS conversation_id, 
     conversation.conversation_name AS name, 
@@ -389,9 +389,8 @@ module.exports = (db, actions) => {
     AND contact.id != $1
     GROUP BY conversation.id, conversation.conversation_name, contact.id, contact.first_name, contact.last_name, contact.user_name, contact.email, contact.profile_photo_url, message.id, message.contact_id, message.message_text, message.sent_datetime
     ORDER BY last_activity_datetime DESC, message.id ASC;    
-  `, [loggedInUser])
+  `, [loggedInUser.id])
       .then(({ rows }) => {
-        console.log(rows);
         const conversations = [];
         let currentConversationId;
         let currentConversation;
