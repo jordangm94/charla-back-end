@@ -310,7 +310,6 @@ module.exports = (db, actions) => {
   });
 
   router.post("/authenticate", validateToken, (req, res) => {
-    console.log('test');
     const authenticated = req.authenticated;
     return res.json({ authenticated });
   });
@@ -353,7 +352,7 @@ module.exports = (db, actions) => {
       });
   });
 
-  router.get('/datatest', validateToken, (req, res) => {
+  router.get('/conversations', validateToken, (req, res) => {
     const loggedInUser = req.contact;
     db.query(`
     SELECT conversation.id AS conversation_id, 
@@ -424,6 +423,22 @@ module.exports = (db, actions) => {
           }
         });
         res.json(conversations);
+      });
+  });
+
+  router.get('/messages', validateToken, (req, res) => {
+    const conversationID = req.query.id;
+
+    db.query(`
+    SELECT *
+    FROM message
+    WHERE conversation_id = $1; 
+  `, [conversationID])
+      .then(({ rows }) => {
+        return res.json(rows);
+      })
+      .catch(error => {
+        return res.status(400).json({ error });
       });
   });
 
