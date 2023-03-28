@@ -67,7 +67,7 @@ module.exports = (db, actions) => {
 
   //This route is used for live searching for a user within the database using the search bar
   router.get('/searchuser', validateToken, (req, res) => {
-    const searchUserInput = `%${req.query.searchedUser}%`;
+    const searchUserInput = `%${req.query.searchValue}%`;
     const contact = req.contact;
 
     db.query(
