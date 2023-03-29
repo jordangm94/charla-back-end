@@ -282,7 +282,14 @@ module.exports = (db, actions) => {
 
             req.session.accessToken = accessToken;
 
-            return res.json({ error: null, authenticated: true });
+            const loggedInUser = {
+              id: contact.id,
+              firstName: contact.first_name,
+              lastName: contact.last_name,
+              profilePhotoURL: contact.profile_photo_url
+            };
+
+            return res.json({ error: null, authenticated: true, loggedInUser });
           })
             .catch(error => {
               return res.status(400).json({ error });
@@ -301,7 +308,14 @@ module.exports = (db, actions) => {
 
         req.session.accessToken = accessToken;
 
-        return res.json({ error: null, authenticated: true });
+        const loggedInUser = {
+          id: contact.id,
+          firstName: contact.first_name,
+          lastName: contact.last_name,
+          profilePhotoURL: contact.profile_photo_url
+        };
+
+        return res.json({ error: null, authenticated: true, loggedInUser });
       } else {
         return res.status(400).json({ error: "Incorrect email or password!" });
       }
@@ -311,7 +325,8 @@ module.exports = (db, actions) => {
 
   router.post("/authenticate", validateToken, (req, res) => {
     const authenticated = req.authenticated;
-    return res.json({ authenticated });
+    const contact = req.contact;
+    return res.json({ authenticated, contact });
   });
 
   router.post("/logout", validateToken, (req, res) => {
