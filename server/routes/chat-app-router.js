@@ -253,15 +253,16 @@ module.exports = (db, actions) => {
   });
 
   router.delete('/deleteparticipant', validateToken, (req, res) => {
-    loggedInContactID = req.contact.id;
-    convoID = req.query.convoID;
-    console.log("HELLO FROM YOUR DELETE ROUTE AND YOUR CONVOID", loggedInContactID, convoID);
+    const loggedInContactID = req.contact.id;
+    const convoID = req.query.convoID;
 
     db.query(`
     DELETE FROM participant
-    WHERE conversation_id = ${convoID} AND contact_id = ${loggedInContactID};`)
+    WHERE conversation_id = $1
+    AND contact_id = $2;
+    `, [convoID, loggedInContactID])
       .then(({ rows }) => {
-        res.json({ rows });
+        res.json({ rows, success: true });
       });
   });
 
