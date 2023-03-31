@@ -27,7 +27,8 @@ CREATE TABLE conversation (
 CREATE TABLE participant (
   id SERIAL PRIMARY KEY NOT NULL,
   conversation_id INTEGER REFERENCES conversation(id) ON DELETE CASCADE,
-  contact_id INTEGER REFERENCES contact(id) ON DELETE CASCADE
+  contact_id INTEGER REFERENCES contact(id) ON DELETE CASCADE,
+  participating BOOLEAN NOT NULL
 );
 
 CREATE TABLE message (
