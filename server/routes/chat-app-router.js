@@ -257,7 +257,8 @@ module.exports = (db, actions) => {
     const convoID = req.query.convoID;
 
     db.query(`
-    DELETE FROM participant
+    UPDATE participant
+    SET participating = false
     WHERE conversation_id = $1
     AND contact_id = $2;
     `, [convoID, loggedInContactID])
@@ -405,8 +406,11 @@ module.exports = (db, actions) => {
     WHERE contact_id = $1
     )
     AND contact.id != $1
+    AND (SELECT participating 
+    FROM participant 
+    WHERE conversation_id = conversation.id AND contact_id = $1) = true
     GROUP BY conversation.id, conversation.conversation_name, contact.id, contact.first_name, contact.last_name, contact.profile_photo_url, message.id, message.contact_id, message.message_text, message.sent_datetime, participant.participating
-    ORDER BY last_activity_datetime DESC, message.id ASC;   
+    ORDER BY last_activity_datetime DESC, message.id ASC;
   `, [loggedInUser.id])
       .then(({ rows }) => {
         const conversations = [];
@@ -414,7 +418,7 @@ module.exports = (db, actions) => {
         let currentConversation;
 
         rows.forEach(row => {
-          const { conversation_id, name, last_activity_datetime, am_i_present } = row;
+          const { conversation_id, name, last_activity_datetime } = row;
 
           // If the current row belongs to a new conversation, create a new conversation object
           if (conversation_id !== currentConversationId) {
@@ -435,7 +439,6 @@ module.exports = (db, actions) => {
                 sentDatetime: row.sent_datetime,
               },
               last_activity_datetime,
-              amIPresent: am_i_present
             };
             conversations.push(currentConversation);
             currentConversationId = conversation_id;
