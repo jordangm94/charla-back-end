@@ -15,259 +15,6 @@ module.exports = (db, actions) => {
     res.send('Hello from the CHAT APP!');
   });
 
-  // This route is used to load the profile picture and last message received from each user in the chat list. This information also used in loading searched users (name and profile picture), which also uses the chatlistitem.
-  router.get('/chat/list/message', validateToken, (req, res) => {
-    //Used DISTINCT ON to remove duplicate rows of conversation_id (i.e. multiple messages belonging to convo ID) and only show 1 message for each conversation ID in the ChatList component.
-    const contact = req.contact;
-
-    db.query(
-      `SELECT DISTINCT ON (participant.conversation_id) participant.conversation_id, conversation_name, message.id AS message_id, message_text, message.contact_id AS message_owner_id
-
-      FROM participant JOIN conversation ON participant.conversation_id = conversation.id JOIN message ON conversation.id = message.conversation_id
-      
-      WHERE participant.contact_id = $1
-      
-      ORDER BY conversation_id DESC, message.id DESC;
-      `, [contact.id]
-    ).then(({ rows }) => {
-      res.json(rows);
-    });
-  });
-
-  router.get('/chat/list/profile', validateToken, (req, res) => {
-    const contact = req.contact;
-    const conversationID = req.query.conversationID;
-
-    db.query(
-      `SELECT conversation_name
-
-      FROM conversation
-
-      WHERE conversation.id = $1
-
-      LIMIT 1
-      `, [conversationID]
-    ).then(({ rows }) => {
-      if (rows[0] && rows[0].conversation_name) {
-        const otherUserID = rows[0].conversation_name.slice(26, 27) !== `${contact.id}` ? (+rows[0].conversation_name.slice(26, 27)) : (+rows[0].conversation_name.slice(32, 33));
-        db.query(
-          `SELECT contact.id, first_name, last_name, profile_photo_url
-          
-          FROM contact
-  
-          WHERE contact.id = $1
-          `, [otherUserID]
-        )
-          .then(({ rows }) => {
-            res.json(rows[0]);
-          });
-      }
-    });
-  });
-
-  //This route is used for live searching for a user within the database using the search bar
-  router.get('/searchuser', validateToken, (req, res) => {
-    const searchUserInput = `%${req.query.searchValue}%`;
-    const contact = req.contact;
-
-    db.query(
-      `SELECT id, first_name, last_name, profile_photo_url
-    
-      FROM contact
-
-      WHERE id != $2
-     
-      AND (LOWER(first_name) LIKE LOWER($1) OR LOWER(last_name) LIKE LOWER($1) OR LOWER(user_name) LIKE LOWER($1))
-      `, [searchUserInput, contact.id]
-    ).then(({ rows }) => {
-      return res.json(rows);
-    });
-  });
-
-  //Need to add corresponding ID to the route, send in a request
-  router.get('/chat', validateToken, (req, res) => {
-    const conversationId = req.query.id;
-    const contact = req.contact;
-    db.query(`SELECT * 
-      FROM message 
-      WHERE conversation_id = $1;
-    `, [conversationId])
-      .then(({ rows }) => {
-        // res.json(rows);
-        res.json({ rows, id: contact.id });
-      });
-  });
-
-  //This route is used after the /newconversation post route, it takes both the logged in user id and contact ID and uses them to get the conversation with both users
-  router.get('/getthenewconversation', validateToken, (req, res) => {
-    const loggedInUserID = req.contact.id;
-    const contactYouAreStartingAConvoWith = req.query.contactid;
-
-    const conditionOne = `Conversation between user ${loggedInUserID} and ${contactYouAreStartingAConvoWith}`;
-    const conditionTwo = `Conversation between user ${contactYouAreStartingAConvoWith} and ${loggedInUserID}`;
-
-    db.query(`
-    SELECT conversation.id AS conversation_id 
-    FROM conversation 
-    WHERE conversation_name = $1
-    OR conversation_name = $2;
-    `, [conditionOne, conditionTwo])
-      .then(({ rows }) => {
-        res.json({ rows });
-      });
-  });
-
-  //This route will be accessed in the chat input component, before a message is sent a get request ensures that both indivduals are participants in that conversation before allowing user input in that conversation (this is for the case where a participant has closed a convo, which removes them from that convo. Therefore whenr eopening need to add them back).
-  router.get('/participantspresent', validateToken, (req, res) => {
-    const loggedInUserID = req.contact.id;
-    const convoID = req.query.convoID;
-
-    console.log('Hello from your contact ID and and CONVO ID in your participantspresent route', loggedInUserID, convoID);
-
-    // SELECT message.contact_id AS message_contact_id_always_not_null, participant.contact_id AS participant_contact_id_sometimes_null
-    // FROM participant JOIN conversation ON conversation_id = conversation.id JOIN message ON conversation.id = message.conversation_id
-    // WHERE participant.conversation_id = 1  AND message.contact_id = 1;
-    // LIMIT 2;
-
-    db.query(`
-    SELECT contact_id FROM participant WHERE conversation_id = ${convoID}
-    `)
-      .then(({ rows }) => {
-        res.json({ rows, loggedInUserID: loggedInUserID });
-      });
-  });
-
-  //This route is used specifically when you are messaging an individual who has closed your existing conversation on their end and we need to add them back to the convo. First start by getting that individuals contact ID from conversation_name.
-  router.get('/useconvoIDtogetcontactID', validateToken, (req, res) => {
-    const convoID = req.query.convoID;
-
-    console.log('Hello from your CONVO ID trying to fix leave participant conversation', convoID);
-
-    db.query(`
-    SELECT conversation_name FROM conversation WHERE conversation.id = ${convoID}
-    `)
-      .then(({ rows }) => {
-        res.json({ rows });
-      });
-  });
-
-  //This route receives the correct contact ID of the individual who closed a conversation on their end who you are trying to message, and adds them back to the convo in the process of messaging them.
-  router.post('/addparticipantwholeftbacktoconvo', validateToken, (req, res) => {
-    const contactID = req.body.contactID;
-    const convoID = req.body.convoID;
-
-    console.log('HELLO FROM THE CONVOID and the CONTACT ID of the individual who left', convoID, contactID);
-
-    db.query(`
-    INSERT INTO participant (conversation_id, contact_id)
-    VALUES ($1, $2);
-    `, [convoID, contactID])
-      .then(({ rows }) => {
-        res.json(rows);
-      });
-  });
-
-  router.post('/addloggedinuserbacktoconvo', validateToken, (req, res) => {
-    const loggedInUserID = req.contact.id;
-    const convoID = req.body.convoID;
-
-    console.log('HELLO FROM THE CONVOID in the add participant back route', convoID);
-
-    db.query(`
-    INSERT INTO participant (conversation_id, contact_id)
-    VALUES ($1, $2);
-    `, [convoID.conversation_id, loggedInUserID])
-      .then(({ rows }) => {
-        res.json(rows);
-      });
-  });
-
-  router.get('/amipresent', validateToken, (req, res) => {
-    const loggedInUserID = req.contact.id;
-    const convoID = req.query.convoID.conversation_id;
-
-    console.log('working 1', convoID);
-
-    db.query(`
-    SELECT *
-    FROM participant
-    WHERE conversation_id = $1
-    AND contact_id = $2;
-    `, [convoID, loggedInUserID])
-      .then(({ rows }) => {
-        res.json(rows[0]);
-      });
-  });
-
-  //The route we will use to add the contact you are speaking with back to the convo after they have left.
-  router.post('/addparticipantbacktoconvo', validateToken, (req, res) => {
-    const loggedInUserID = req.contact.id;
-    const convoID = req.body.convoID;
-
-    console.log('HELLO FROM THE CONVOID in the add participant back route', convoID);
-
-    // db.query(`INSERT INTO participant (conversation_id, contact_id) VALUES (${convoID}, ${loggedInUserID});
-    // `)
-    //   .then(({ rows }) => {
-    //     res.json(rows);
-    //   });
-  });
-
-  router.post('/messagesubmission', validateToken, (req, res) => {
-    const messageSubmitted = req.body.messageSubmitted;
-    const contact = req.contact.id;
-    const convoID = req.body.convoID;
-    console.log('Hello from the backend here is your req.body', messageSubmitted, contact, convoID);
-
-    db.query(`INSERT INTO message (contact_id, message_text, sent_datetime, conversation_id)
-    VALUES ($1, $2, NOW(), $3);
-  `, [contact, messageSubmitted, convoID])
-      .then(({ rows }) => {
-        // res.json(rows);
-        res.json({ rows });
-      });
-  });
-
-  router.post('/newconversation', validateToken, (req, res) => {
-    const loggedInUserID = req.contact.id; //Contains the ID of the user who is logged in
-    const contactYouAreStartingAConvoWith = req.body.contactid;
-    const contactFirstName = req.body.firstName;
-    const contactLastName = req.body.lastName;
-
-    db.query(`
-    INSERT INTO conversation (conversation_name)
-    VALUES ('Conversation between user ${loggedInUserID} and ${contactYouAreStartingAConvoWith}');
-
-    INSERT INTO participant (conversation_id, contact_id)
-    VALUES((SELECT LAST_VALUE("id") OVER (ORDER BY "id" DESC) FROM conversation LIMIT 1), ${loggedInUserID}),
-    ((SELECT LAST_VALUE("id") OVER (ORDER BY "id" DESC) FROM conversation LIMIT 1), ${contactYouAreStartingAConvoWith});
-
-    INSERT INTO message(contact_id, message_text, sent_datetime, conversation_id)
-    VALUES(5, 'A conversation has started between ${req.contact.firstName} ${req.contact.lastName} and ${contactFirstName} ${contactLastName}.', NOW(), (SELECT LAST_VALUE("id") OVER (ORDER BY "id" DESC) FROM conversation LIMIT 1)); 
-  `)
-      //Important note, upon deployment if database is adjsuted and admin user is changed, we must change the number 5 in insert query.
-      .then(({ rows }) => {
-        // res.json(rows);
-        res.json({ rows });
-      });
-  });
-
-  router.put('/participantstatus/:convoID', validateToken, (req, res) => {
-    const loggedInContactID = req.contact.id;
-    const { convoID } = req.params;
-    const { amIPresent } = req.body;
-
-    db.query(`
-    UPDATE participant
-    SET participating = $1
-    WHERE conversation_id = $2
-    AND contact_id = $3;
-    `, [amIPresent, convoID, loggedInContactID])
-      .then(({ rows }) => {
-        res.json({ rows, success: true });
-      });
-  });
-
   router.post('/register', (req, res) => {
     const { firstName, lastName, username, email, password } = req.body;
 
@@ -323,7 +70,6 @@ module.exports = (db, actions) => {
         return res.status(400).json({ error: "Incorrect email or password!" });
       }
     });
-
   });
 
   router.post("/authenticate", validateToken, (req, res) => {
@@ -335,39 +81,6 @@ module.exports = (db, actions) => {
   router.post("/logout", validateToken, (req, res) => {
     req.session.destroy();
     return res.json({ error: null, auth: false });
-  });
-
-  router.get("/loggedin", validateToken, (req, res) => {
-    const loggedInUser = req.contact;
-    return res.json({ loggedInUser });
-  });
-
-  router.post('/feedback', (req, res) => {
-    const { fullName, feedback } = req.body;
-
-    db.query(`
-    INSERT INTO feedback (full_name, message)
-    VALUES ($1, $2); 
-  `, [fullName, feedback])
-      .then(({ rows }) => {
-        return res.json(rows);
-      })
-      .catch(error => {
-        return res.status(400).json({ error });
-      });
-  });
-
-  router.get('/feedback', (req, res) => {
-    db.query(`
-    SELECT *
-    FROM feedback; 
-  `)
-      .then(({ rows }) => {
-        return res.json(rows);
-      })
-      .catch(error => {
-        return res.status(400).json({ error });
-      });
   });
 
   router.get('/conversations', validateToken, (req, res) => {
@@ -455,6 +168,113 @@ module.exports = (db, actions) => {
     FROM message
     WHERE conversation_id = $1; 
   `, [conversationID])
+      .then(({ rows }) => {
+        return res.json(rows);
+      })
+      .catch(error => {
+        return res.status(400).json({ error });
+      });
+  });
+
+  //This route is used for live searching for a user within the database using the search bar
+  router.get('/searchuser', validateToken, (req, res) => {
+    const searchUserInput = `%${req.query.searchValue}%`;
+    const contact = req.contact;
+
+    db.query(
+      `SELECT id, first_name, last_name, profile_photo_url
+    
+      FROM contact
+
+      WHERE id != $2
+     
+      AND (LOWER(first_name) LIKE LOWER($1) OR LOWER(last_name) LIKE LOWER($1) OR LOWER(user_name) LIKE LOWER($1))
+      `, [searchUserInput, contact.id]
+    ).then(({ rows }) => {
+      return res.json(rows);
+    });
+  });
+
+  router.put('/participantstatus/:convoID', validateToken, (req, res) => {
+    const loggedInContactID = req.contact.id;
+    const { convoID } = req.params;
+    const { amIPresent } = req.body;
+
+    db.query(`
+    UPDATE participant
+    SET participating = $1
+    WHERE conversation_id = $2
+    AND contact_id = $3;
+    `, [amIPresent, convoID, loggedInContactID])
+      .then(({ rows }) => {
+        res.json({ rows, success: true });
+      });
+  });
+
+  router.post('/messagesubmission', validateToken, (req, res) => {
+    const messageSubmitted = req.body.messageSubmitted;
+    const contact = req.contact.id;
+    const convoID = req.body.convoID;
+    console.log('Hello from the backend here is your req.body', messageSubmitted, contact, convoID);
+
+    db.query(`INSERT INTO message (contact_id, message_text, sent_datetime, conversation_id)
+    VALUES ($1, $2, NOW(), $3);
+  `, [contact, messageSubmitted, convoID])
+      .then(({ rows }) => {
+        // res.json(rows);
+        res.json({ rows });
+      });
+  });
+
+  router.post('/newconversation', validateToken, (req, res) => {
+    const loggedInUserID = req.contact.id; //Contains the ID of the user who is logged in
+    const contactYouAreStartingAConvoWith = req.body.contactid;
+    const contactFirstName = req.body.firstName;
+    const contactLastName = req.body.lastName;
+
+    db.query(`
+    INSERT INTO conversation (conversation_name)
+    VALUES ('Conversation between user ${loggedInUserID} and ${contactYouAreStartingAConvoWith}');
+
+    INSERT INTO participant (conversation_id, contact_id)
+    VALUES((SELECT LAST_VALUE("id") OVER (ORDER BY "id" DESC) FROM conversation LIMIT 1), ${loggedInUserID}),
+    ((SELECT LAST_VALUE("id") OVER (ORDER BY "id" DESC) FROM conversation LIMIT 1), ${contactYouAreStartingAConvoWith});
+
+    INSERT INTO message(contact_id, message_text, sent_datetime, conversation_id)
+    VALUES(5, 'A conversation has started between ${req.contact.firstName} ${req.contact.lastName} and ${contactFirstName} ${contactLastName}.', NOW(), (SELECT LAST_VALUE("id") OVER (ORDER BY "id" DESC) FROM conversation LIMIT 1)); 
+  `)
+      //Important note, upon deployment if database is adjsuted and admin user is changed, we must change the number 5 in insert query.
+      .then(({ rows }) => {
+        // res.json(rows);
+        res.json({ rows });
+      });
+  });
+
+  router.get("/loggedin", validateToken, (req, res) => {
+    const loggedInUser = req.contact;
+    return res.json({ loggedInUser });
+  });
+
+  router.post('/feedback', (req, res) => {
+    const { fullName, feedback } = req.body;
+
+    db.query(`
+    INSERT INTO feedback (full_name, message)
+    VALUES ($1, $2); 
+  `, [fullName, feedback])
+      .then(({ rows }) => {
+        return res.json(rows);
+      })
+      .catch(error => {
+        return res.status(400).json({ error });
+      });
+  });
+
+  router.get('/feedback', (req, res) => {
+    db.query(`
+    SELECT *
+    FROM feedback; 
+  `)
       .then(({ rows }) => {
         return res.json(rows);
       })
