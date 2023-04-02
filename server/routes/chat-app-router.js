@@ -252,16 +252,17 @@ module.exports = (db, actions) => {
       });
   });
 
-  router.delete('/deleteparticipant', validateToken, (req, res) => {
+  router.put('/deleteparticipant/:convoID', validateToken, (req, res) => {
     const loggedInContactID = req.contact.id;
-    const convoID = req.query.convoID;
+    const { convoID } = req.params;
+    const { amIPresent } = req.body;
 
     db.query(`
     UPDATE participant
-    SET participating = false
-    WHERE conversation_id = $1
-    AND contact_id = $2;
-    `, [convoID, loggedInContactID])
+    SET participating = $1
+    WHERE conversation_id = $2
+    AND contact_id = $3;
+    `, [amIPresent, convoID, loggedInContactID])
       .then(({ rows }) => {
         res.json({ rows, success: true });
       });
