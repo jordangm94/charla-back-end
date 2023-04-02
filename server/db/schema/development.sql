@@ -16,10 +16,10 @@ VALUES ('Conversation between user 1 and 2'),
 DELETE from participant;
 
 INSERT INTO participant (conversation_id, contact_id, participating)
-VALUES (1, 1, true),
-(1, 2, true),
-(2, 1, true),
-(2, 3, true);
+VALUES (1, 1, TRUE),
+(1, 2, TRUE),
+(2, 1, TRUE),
+(2, 3, TRUE);
 
 DELETE from message;
 
