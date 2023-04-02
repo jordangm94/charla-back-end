@@ -252,7 +252,7 @@ module.exports = (db, actions) => {
       });
   });
 
-  router.put('/deleteparticipant/:convoID', validateToken, (req, res) => {
+  router.put('/participantstatus/:convoID', validateToken, (req, res) => {
     const loggedInContactID = req.contact.id;
     const { convoID } = req.params;
     const { amIPresent } = req.body;
