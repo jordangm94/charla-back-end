@@ -195,22 +195,6 @@ module.exports = (db, actions) => {
     });
   });
 
-  router.put('/participantstatus/:convoID', validateToken, (req, res) => {
-    const loggedInContactID = req.contact.id;
-    const { convoID } = req.params;
-    const { amIPresent } = req.body;
-
-    db.query(`
-    UPDATE participant
-    SET participating = $1
-    WHERE conversation_id = $2
-    AND contact_id = $3;
-    `, [amIPresent, convoID, loggedInContactID])
-      .then(({ rows }) => {
-        res.json({ rows, success: true });
-      });
-  });
-
   router.post('/messagesubmission', validateToken, (req, res) => {
     const messageSubmitted = req.body.messageSubmitted;
     const contact = req.contact.id;
@@ -224,35 +208,6 @@ module.exports = (db, actions) => {
         // res.json(rows);
         res.json({ rows });
       });
-  });
-
-  router.post('/newconversation', validateToken, (req, res) => {
-    const loggedInUserID = req.contact.id; //Contains the ID of the user who is logged in
-    const contactYouAreStartingAConvoWith = req.body.contactid;
-    const contactFirstName = req.body.firstName;
-    const contactLastName = req.body.lastName;
-
-    db.query(`
-    INSERT INTO conversation (conversation_name)
-    VALUES ('Conversation between user ${loggedInUserID} and ${contactYouAreStartingAConvoWith}');
-
-    INSERT INTO participant (conversation_id, contact_id)
-    VALUES((SELECT LAST_VALUE("id") OVER (ORDER BY "id" DESC) FROM conversation LIMIT 1), ${loggedInUserID}),
-    ((SELECT LAST_VALUE("id") OVER (ORDER BY "id" DESC) FROM conversation LIMIT 1), ${contactYouAreStartingAConvoWith});
-
-    INSERT INTO message(contact_id, message_text, sent_datetime, conversation_id)
-    VALUES(5, 'A conversation has started between ${req.contact.firstName} ${req.contact.lastName} and ${contactFirstName} ${contactLastName}.', NOW(), (SELECT LAST_VALUE("id") OVER (ORDER BY "id" DESC) FROM conversation LIMIT 1)); 
-  `)
-      //Important note, upon deployment if database is adjsuted and admin user is changed, we must change the number 5 in insert query.
-      .then(({ rows }) => {
-        // res.json(rows);
-        res.json({ rows });
-      });
-  });
-
-  router.get("/loggedin", validateToken, (req, res) => {
-    const loggedInUser = req.contact;
-    return res.json({ loggedInUser });
   });
 
   router.post('/feedback', (req, res) => {
