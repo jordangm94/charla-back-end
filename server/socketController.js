@@ -161,8 +161,6 @@ module.exports.newConvo = async (socket, otherContact, callback) => {
     if (otherContactSocketID.rows[0]) {
       socket.to(otherContactSocketID.rows[0].socket_id).emit('new_convo', conversationObjectForOtherParticipant);
     }
-
-    return;
   }
 };
 
@@ -183,8 +181,7 @@ module.exports.newMessage = async (socket, values, callback) => {
     UPDATE participant
     SET participating = TRUE
     WHERE conversation_id = $1
-    AND contact_id = $2
-    RETURNING *;
+    AND contact_id = $2;
     `, [values.convoID, values.contactID]);
   }
 
@@ -194,5 +191,11 @@ module.exports.newMessage = async (socket, values, callback) => {
   RETURNING *;
   `, [socket.user.id, values.messageText, values.convoID]);
 
-  callback({ done: true, data: newMessageInsertData.rows[0] });
+  if (newMessageInsertData) {
+    callback({ done: true, data: newMessageInsertData.rows[0] });
+
+    if (otherContactSocketID.rows[0]) {
+      socket.to(otherContactSocketID.rows[0].socket_id).emit('new_message', newMessageInsertData.rows[0]);
+    }
+  }
 };
