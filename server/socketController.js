@@ -34,6 +34,27 @@ module.exports.closeUser = socket => {
   `, [socket.user.id]);
 };
 
+module.exports.updateParticipantStatus = async (socket, values, callback) => {
+  const otherContactSocketID = await db.query(`
+  SELECT socket_id
+  FROM socket JOIN contact ON socket.contact_id = contact.id JOIN participant ON participant.contact_id = socket.contact_id
+  WHERE participant.conversation_id = $1
+  AND participant.contact_id != $2
+  `, [values.convoID, socket.user.id]);
+
+  const updateParticipantStatusData = await db.query(`
+  UPDATE participant
+  SET participating = $1
+  WHERE conversation_id = $2
+  AND contact_id = $3
+  RETURNING participating;
+  `, [values.amIPresent, values.convoID, socket.user.id]);
+
+  if (updateParticipantStatusData) {
+    callback({ done: true, data: updateParticipantStatusData.rows[0] });
+  }
+};
+
 module.exports.newConvo = async (socket, otherContact, callback) => {
   if (socket.user.id === otherContact.contactid) {
     callback({ done: false, error: "Cannot create a conversation with yourself" });

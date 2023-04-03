@@ -7,7 +7,7 @@ const { Server } = require("socket.io");
 const server = require("http").Server(app);
 const { sessionMiddleware } = require("./serverController");
 const sharedSession = require("express-socket.io-session");
-const { authorizeUser, newConvo, initializeUser, closeUser } = require("./socketController");
+const { authorizeUser, updateParticipantStatus, newConvo, initializeUser, closeUser } = require("./socketController");
 
 const io = new Server(server, {
   cors: {
@@ -70,6 +70,10 @@ io.use(authorizeUser);
 io.on("connection", socket => {
   console.log(`User Connected: ${socket.id}`);
   initializeUser(socket);
+
+  socket.on("update_participant_status", (values, callback) => {
+    updateParticipantStatus(socket, values, callback);
+  });
 
   socket.on("new_convo", (otherContact, callback) => {
     newConvo(socket, otherContact, callback);
