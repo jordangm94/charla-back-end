@@ -47,11 +47,15 @@ module.exports.updateParticipantStatus = async (socket, values, callback) => {
   SET participating = $1
   WHERE conversation_id = $2
   AND contact_id = $3
-  RETURNING participating;
+  RETURNING *;
   `, [values.amIPresent, values.convoID, socket.user.id]);
 
   if (updateParticipantStatusData) {
     callback({ done: true, data: updateParticipantStatusData.rows[0] });
+
+    if (otherContactSocketID.rows[0]) {
+      socket.to(otherContactSocketID.rows[0].socket_id).emit('update_participant_status', updateParticipantStatusData.rows[0]);
+    }
   }
 };
 
