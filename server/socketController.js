@@ -166,17 +166,33 @@ module.exports.newConvo = async (socket, otherContact, callback) => {
   }
 };
 
-module.exports.newMessage = async (socket, otherContact, callback) => {
-  if (socket.user.id === otherContact.contactid) {
+module.exports.newMessage = async (socket, values, callback) => {
+  if (socket.user.id === values.contactID) {
     callback({ done: false, error: "Cannot send a message to yourself" });
     return;
   }
 
-  const otherContactSocketId = await db.query(`
+  const otherContactSocketID = await db.query(`
   SELECT socket_id
   FROM socket
   WHERE contact_id = $1
-  `, [otherContact.contactid]);
+  `, [values.contactID]);
 
+  if (!values.participating) {
+    db.query(`
+    UPDATE participant
+    SET participating = TRUE
+    WHERE conversation_id = $1
+    AND contact_id = $2
+    RETURNING *;
+    `, [values.convoID, values.contactID]);
+  }
 
+  const newMessageInsertData = await db.query(`
+  INSERT INTO message(contact_id, message_text, sent_datetime, conversation_id)
+  VALUES($1, $2, NOW(), $3)
+  RETURNING *;
+  `, [socket.user.id, values.messageText, values.convoID]);
+
+  callback({ done: true, data: newMessageInsertData.rows[0] });
 };
