@@ -65,7 +65,7 @@ module.exports.newConvo = async (socket, otherContact, callback) => {
     return;
   }
 
-  const otherContactSocketId = await db.query(`
+  const otherContactSocketID = await db.query(`
   SELECT socket_id
   FROM socket
   WHERE contact_id = $1
@@ -106,7 +106,17 @@ module.exports.newConvo = async (socket, otherContact, callback) => {
     WHERE id = $1
     `, [otherParticipant.contact_id]);
 
-    const conversationObject = {
+    const myData = participantsData.find(
+      participant => participant.contact_id === socket.user.id
+    );
+
+    const myExtraData = await db.query(`
+    SELECT first_name, last_name, profile_photo_url
+    FROM contact
+    WHERE id = $1
+    `, [socket.user.id]);
+
+    const conversationObjectForMe = {
       conversation_id: conversationData.id,
       name: conversationData.conversation_name,
       otherParticipant: {
@@ -126,50 +136,31 @@ module.exports.newConvo = async (socket, otherContact, callback) => {
       amIPresent: true
     };
 
-    callback({ done: true, data: conversationObject });
+    const conversationObjectForOtherParticipant = {
+      conversation_id: conversationData.id,
+      name: conversationData.conversation_name,
+      otherParticipant: {
+        id: myData.contact_id,
+        firstName: myExtraData.rows[0].first_name,
+        lastName: myExtraData.rows[0].last_name,
+        profilePhotoUrl: myExtraData.rows[0].profile_photo_url,
+        participating: true
+      },
+      lastMessage: {
+        id: messageData.id,
+        senderContactId: socket.user.id,
+        messageText: messageData.message_text,
+        sentDatetime: messageData.sent_datetime
+      },
+      last_activity_datetime: messageData.sent_datetime,
+      amIPresent: true
+    };
 
-    // const chatListData = await db.query(
-    //   `SELECT message.conversation_id, message.id AS message_id, message_text, message.contact_id AS message_owner_id
+    callback({ done: true, data: conversationObjectForMe });
 
-    //   FROM message
-
-    //   WHERE message.conversation_id = $1
-
-    //   ORDER BY message.id DESC
-
-    //   LIMIT 1;
-    //   `, [data[0].rows[0].id]);
-
-    // const otherProfile = await db.query(
-    //   `SELECT conversation_name
-
-    //   FROM conversation
-
-    //   WHERE conversation.id = $1
-
-    //   LIMIT 1
-    //   `, [data[0].rows[0].id]
-    // ).then(({ rows }) => {
-    //   if (rows[0] && rows[0].conversation_name) {
-    //     const otherUserID = rows[0].conversation_name.slice(26, 27) !== `${socket.user.id}` ? (+rows[0].conversation_name.slice(26, 27)) : (+rows[0].conversation_name.slice(32, 33));
-
-    //     db.query(
-    //       `SELECT contact.id, first_name, last_name, profile_photo_url
-
-    //       FROM contact
-
-    //       WHERE contact.id = $1
-    //       `, [otherUserID]
-    //     );
-    //   }
-    // });
-
-    // chatListData.contact = otherProfile;
-
-    // if (otherContactSocketId.rows[0]) {
-    //   console.log(otherContactSocketId.rows[0].socket_id);
-    //   socket.to(otherContactSocketId.rows[0].socket_id).emit('new_convo', chatListData);
-    // }
+    if (otherContactSocketID.rows[0]) {
+      socket.to(otherContactSocketID.rows[0].socket_id).emit('new_convo', conversationObjectForOtherParticipant);
+    }
 
     return;
   }
