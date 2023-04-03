@@ -1,4 +1,3 @@
-const { request, response } = require('express');
 const express = require('express');
 const router = express.Router();
 const bcrypt = require("bcryptjs");
@@ -193,21 +192,6 @@ module.exports = (db, actions) => {
     ).then(({ rows }) => {
       return res.json(rows);
     });
-  });
-
-  router.post('/messagesubmission', validateToken, (req, res) => {
-    const messageSubmitted = req.body.messageSubmitted;
-    const contact = req.contact.id;
-    const convoID = req.body.convoID;
-    console.log('Hello from the backend here is your req.body', messageSubmitted, contact, convoID);
-
-    db.query(`INSERT INTO message (contact_id, message_text, sent_datetime, conversation_id)
-    VALUES ($1, $2, NOW(), $3);
-  `, [contact, messageSubmitted, convoID])
-      .then(({ rows }) => {
-        // res.json(rows);
-        res.json({ rows });
-      });
   });
 
   router.post('/feedback', (req, res) => {
