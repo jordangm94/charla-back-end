@@ -47,13 +47,13 @@ function getContactByUsername(db, username) {
     });
 };
 
-function registerContact(db, firstName, lastName, username, email, hashedPassword, profilePic, userIDSocket) {
+function registerContact(db, firstName, lastName, username, email, hashedPassword, profilePic) {
   const queryString = `
-    INSERT INTO contact (first_name, last_name, user_name, email, password_hash, profile_photo_url, user_id_socket)
-    VALUES ($1, $2, $3, $4, $5, $6, $7)
+    INSERT INTO contact (first_name, last_name, user_name, email, password_hash, profile_photo_url)
+    VALUES ($1, $2, $3, $4, $5, $6)
     RETURNING *
   `;
-  const params = [firstName, lastName, username, email, hashedPassword, profilePic, userIDSocket];
+  const params = [firstName, lastName, username, email, hashedPassword, profilePic];
 
   return db.query(queryString, params)
     .then(result => {
