@@ -19,21 +19,17 @@ module.exports = (db, actions) => {
 
     getContactByEmail(db, email).then((contact) => {
       if (contact) {
-        return res
-          .status(400)
-          .json({
-            error: "Email exists",
-            message: "An account with this email already exists!",
-          });
+        return res.status(400).json({
+          error: "Email exists",
+          message: "An account with this email already exists!",
+        });
       }
       getContactByUsername(db, username).then((contact) => {
         if (contact) {
-          return res
-            .status(400)
-            .json({
-              error: "Username exists",
-              message: "This username has already been taken!",
-            });
+          return res.status(400).json({
+            error: "Username exists",
+            message: "This username has already been taken!",
+          });
         } else {
           const hashedPassword = bcrypt.hashSync(password, 10);
           registerContact(
