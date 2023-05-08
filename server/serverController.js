@@ -9,8 +9,8 @@ const sessionMiddleware = session({
   resave: false,
   cookie: {
     httpOnly: true,
-    maxAge: parseInt(process.env.SESSION_MAX_AGE)
-  }
+    maxAge: parseInt(process.env.SESSION_MAX_AGE),
+  },
 });
 
 module.exports = { sessionMiddleware };

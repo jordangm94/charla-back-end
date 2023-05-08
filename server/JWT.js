@@ -2,7 +2,12 @@ const { sign, verify } = require("jsonwebtoken");
 
 const createToken = (contact) => {
   const accessToken = sign(
-    { id: contact.id, firstName: contact.first_name, lastName: contact.last_name, profilePhotoURL: contact.profile_photo_url },
+    {
+      id: contact.id,
+      firstName: contact.first_name,
+      lastName: contact.last_name,
+      profilePhotoURL: contact.profile_photo_url,
+    },
     process.env.JWT_SECRET
   );
 
@@ -21,7 +26,12 @@ const validateToken = (req, res, next) => {
       return res.status(400).json({ error });
     } else {
       req.authenticated = true;
-      req.contact = { id: decoded.id, firstName: decoded.firstName, lastName: decoded.lastName, profilePhotoURL: decoded.profilePhotoURL };
+      req.contact = {
+        id: decoded.id,
+        firstName: decoded.firstName,
+        lastName: decoded.lastName,
+        profilePhotoURL: decoded.profilePhotoURL,
+      };
       return next();
     }
   });
