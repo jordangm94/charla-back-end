@@ -1,11 +1,12 @@
 const express = require('express');
+
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const { createToken, validateToken } = require('../JWT');
 
-/////////////////////////////////
+/// //////////////////////////////
 /// Index
-/////////////////////////////////
+/// //////////////////////////////
 
 module.exports = (db, actions) => {
   const { getContactByEmail, getContactByUsername, registerContact } = actions;
@@ -30,40 +31,37 @@ module.exports = (db, actions) => {
             error: 'Username exists',
             message: 'This username has already been taken!',
           });
-        } else {
-          const hashedPassword = bcrypt.hashSync(password, 10);
-          registerContact(
-            db,
-            firstName,
-            lastName,
-            username,
-            email,
-            hashedPassword,
-            'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png',
-            'hello'
-          )
-            .then((contact) => {
-              const accessToken = createToken(contact);
-
-              req.session.accessToken = accessToken;
-
-              const loggedInUser = {
-                id: contact.id,
-                firstName: contact.first_name,
-                lastName: contact.last_name,
-                profilePhotoURL: contact.profile_photo_url,
-              };
-
-              return res.json({
-                error: null,
-                authenticated: true,
-                loggedInUser,
-              });
-            })
-            .catch((error) => {
-              return res.status(400).json({ error });
-            });
         }
+        const hashedPassword = bcrypt.hashSync(password, 10);
+        registerContact(
+          db,
+          firstName,
+          lastName,
+          username,
+          email,
+          hashedPassword,
+          'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png',
+          'hello'
+        )
+          .then((contact) => {
+            const accessToken = createToken(contact);
+
+            req.session.accessToken = accessToken;
+
+            const loggedInUser = {
+              id: contact.id,
+              firstName: contact.first_name,
+              lastName: contact.last_name,
+              profilePhotoURL: contact.profile_photo_url,
+            };
+
+            return res.json({
+              error: null,
+              authenticated: true,
+              loggedInUser,
+            });
+          })
+          .catch((error) => res.status(400).json({ error }));
       });
     });
   });
@@ -85,15 +83,14 @@ module.exports = (db, actions) => {
         };
 
         return res.json({ error: null, authenticated: true, loggedInUser });
-      } else {
-        return res.status(400).json({ error: 'Incorrect email or password!' });
       }
+      return res.status(400).json({ error: 'Incorrect email or password!' });
     });
   });
 
   router.post('/authenticate', validateToken, (req, res) => {
-    const authenticated = req.authenticated;
-    const contact = req.contact;
+    const { authenticated } = req;
+    const { contact } = req;
     return res.json({ authenticated, contact });
   });
 
@@ -193,18 +190,14 @@ module.exports = (db, actions) => {
   `,
       [conversationID]
     )
-      .then(({ rows }) => {
-        return res.json(rows);
-      })
-      .catch((error) => {
-        return res.status(400).json({ error });
-      });
+      .then(({ rows }) => res.json(rows))
+      .catch((error) => res.status(400).json({ error }));
   });
 
-  //This route is used for live searching for a user within the database using the search bar
+  // This route is used for live searching for a user within the database using the search bar
   router.get('/searchuser', validateToken, (req, res) => {
     const searchUserInput = `%${req.query.searchValue}%`;
-    const contact = req.contact;
+    const { contact } = req;
 
     db.query(
       `SELECT id, first_name, last_name, profile_photo_url
@@ -216,9 +209,7 @@ module.exports = (db, actions) => {
       AND (LOWER(first_name) LIKE LOWER($1) OR LOWER(last_name) LIKE LOWER($1) OR LOWER(user_name) LIKE LOWER($1))
       `,
       [searchUserInput, contact.id]
-    ).then(({ rows }) => {
-      return res.json(rows);
-    });
+    ).then(({ rows }) => res.json(rows));
   });
 
   router.post('/feedback', (req, res) => {
@@ -231,12 +222,8 @@ module.exports = (db, actions) => {
   `,
       [fullName, feedback]
     )
-      .then(({ rows }) => {
-        return res.json(rows);
-      })
-      .catch((error) => {
-        return res.status(400).json({ error });
-      });
+      .then(({ rows }) => res.json(rows))
+      .catch((error) => res.status(400).json({ error }));
   });
 
   router.get('/feedback', (req, res) => {
@@ -246,12 +233,8 @@ module.exports = (db, actions) => {
     FROM feedback; 
   `
     )
-      .then(({ rows }) => {
-        return res.json(rows);
-      })
-      .catch((error) => {
-        return res.status(400).json({ error });
-      });
+      .then(({ rows }) => res.json(rows))
+      .catch((error) => res.status(400).json({ error }));
   });
 
   return router;

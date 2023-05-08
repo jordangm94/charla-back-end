@@ -15,7 +15,7 @@ const createToken = (contact) => {
 };
 
 const validateToken = (req, res, next) => {
-  const accessToken = req.session.accessToken;
+  const { accessToken } = req.session;
 
   if (!accessToken) {
     return res.status(400).json({ error: 'User not authenticated' });
@@ -24,16 +24,15 @@ const validateToken = (req, res, next) => {
   verify(accessToken, process.env.JWT_SECRET, (error, decoded) => {
     if (error) {
       return res.status(400).json({ error });
-    } else {
-      req.authenticated = true;
-      req.contact = {
-        id: decoded.id,
-        firstName: decoded.firstName,
-        lastName: decoded.lastName,
-        profilePhotoURL: decoded.profilePhotoURL,
-      };
-      return next();
     }
+    req.authenticated = true;
+    req.contact = {
+      id: decoded.id,
+      firstName: decoded.firstName,
+      lastName: decoded.lastName,
+      profilePhotoURL: decoded.profilePhotoURL,
+    };
+    return next();
   });
 };
 

@@ -40,9 +40,7 @@ function getContactByEmail(db, email) {
   `;
   return db
     .query(queryString, [email])
-    .then((result) => {
-      return result.rows[0];
-    })
+    .then((result) => result.rows[0])
     .catch((error) => {
       console.log(error.message);
     });
@@ -56,9 +54,7 @@ function getContactByUsername(db, username) {
   `;
   return db
     .query(queryString, [username])
-    .then((result) => {
-      return result.rows[0];
-    })
+    .then((result) => result.rows[0])
     .catch((error) => {
       console.log(error.message);
     });
@@ -89,9 +85,7 @@ function registerContact(
 
   return db
     .query(queryString, params)
-    .then((result) => {
-      return result.rows[0];
-    })
+    .then((result) => result.rows[0])
     .catch((error) => {
       console.log(error.message);
     });
