@@ -1,4 +1,4 @@
-const { sign, verify } = require("jsonwebtoken");
+const { sign, verify } = require('jsonwebtoken');
 
 const createToken = (contact) => {
   const accessToken = sign(
@@ -18,7 +18,7 @@ const validateToken = (req, res, next) => {
   const accessToken = req.session.accessToken;
 
   if (!accessToken) {
-    return res.status(400).json({ error: "User not authenticated" });
+    return res.status(400).json({ error: 'User not authenticated' });
   }
 
   verify(accessToken, process.env.JWT_SECRET, (error, decoded) => {
