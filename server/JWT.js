@@ -34,6 +34,8 @@ const validateToken = (req, res, next) => {
     };
     return next();
   });
+
+  return undefined;
 };
 
 module.exports = { createToken, validateToken };

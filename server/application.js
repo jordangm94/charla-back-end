@@ -22,7 +22,7 @@ function read(file) {
       },
       (error, data) => {
         if (error) return reject(error);
-        resolve(data);
+        return resolve(data);
       }
     );
   });
@@ -64,7 +64,7 @@ module.exports = function application(
       });
   }
 
-  app.close = function () {
+  app.close = function() {
     return db.end();
   };
 
