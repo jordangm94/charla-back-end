@@ -13,7 +13,7 @@ const { sessionMiddleware } = require('./serverController');
 
 const routes = require('./routes/chat-app-router');
 
-function read(file) {
+const read = file => {
   return new Promise((resolve, reject) => {
     fs.readFile(
       file,
@@ -26,16 +26,16 @@ function read(file) {
       }
     );
   });
-}
+};
 
-module.exports = function application(
+const application = (
   ENV,
   actions = {
     getContactByEmail: () => {},
     getContactByUsername: () => {},
     registerContact: () => {},
   }
-) {
+) => {
   app.use(cors({ credentials: true, origin: true }));
   app.use(helmet());
   app.use(bodyparser.json());
@@ -70,3 +70,6 @@ module.exports = function application(
 
   return app;
 };
+
+
+module.exports = application;

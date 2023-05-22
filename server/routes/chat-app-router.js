@@ -1,8 +1,9 @@
-const express = require("express");
+/* eslint-disable camelcase */
+const express = require('express');
 
 const router = express.Router();
-const bcrypt = require("bcryptjs");
-const { createToken, validateToken } = require("../JWT");
+const bcrypt = require('bcryptjs');
+const { createToken, validateToken } = require('../JWT');
 
 /// //////////////////////////////
 /// Index
@@ -11,25 +12,25 @@ const { createToken, validateToken } = require("../JWT");
 module.exports = (db, actions) => {
   const { getContactByEmail, getContactByUsername, registerContact } = actions;
 
-  router.get("/", (req, res) => {
-    res.send("Hello from the CHAT APP!");
+  router.get('/', (req, res) => {
+    res.send('Hello from the CHAT APP!');
   });
 
-  router.post("/register", (req, res) => {
+  router.post('/register', (req, res) => {
     const { firstName, lastName, username, email, password } = req.body;
 
     getContactByEmail(db, email).then((contact) => {
       if (contact) {
         return res.status(400).json({
-          error: "Email exists",
-          message: "An account with this email already exists!",
+          error: 'Email exists',
+          message: 'An account with this email already exists!',
         });
       }
       getContactByUsername(db, username).then(() => {
         if (contact) {
           return res.status(400).json({
-            error: "Username exists",
-            message: "This username has already been taken!",
+            error: 'Username exists',
+            message: 'This username has already been taken!',
           });
         }
         const hashedPassword = bcrypt.hashSync(password, 10);
@@ -40,8 +41,8 @@ module.exports = (db, actions) => {
           username,
           email,
           hashedPassword,
-          "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
-          "hello"
+          'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png',
+          'hello'
         )
           .then(() => {
             const accessToken = createToken(contact);
@@ -66,7 +67,7 @@ module.exports = (db, actions) => {
     });
   });
 
-  router.post("/login", (req, res) => {
+  router.post('/login', (req, res) => {
     const { email, password } = req.body;
 
     getContactByEmail(db, email).then((contact) => {
@@ -84,22 +85,22 @@ module.exports = (db, actions) => {
 
         return res.json({ error: null, authenticated: true, loggedInUser });
       }
-      return res.status(400).json({ error: "Incorrect email or password!" });
+      return res.status(400).json({ error: 'Incorrect email or password!' });
     });
   });
 
-  router.post("/authenticate", validateToken, (req, res) => {
+  router.post('/authenticate', validateToken, (req, res) => {
     const { authenticated } = req;
     const { contact } = req;
     return res.json({ authenticated, contact });
   });
 
-  router.post("/logout", validateToken, (req, res) => {
+  router.post('/logout', validateToken, (req, res) => {
     req.session.destroy();
     return res.json({ error: null, auth: false });
   });
 
-  router.get("/conversations", validateToken, (req, res) => {
+  router.get('/conversations', validateToken, (req, res) => {
     const loggedInUser = req.contact;
     db.query(
       `
@@ -179,7 +180,7 @@ module.exports = (db, actions) => {
     });
   });
 
-  router.get("/messages", validateToken, (req, res) => {
+  router.get('/messages', validateToken, (req, res) => {
     const conversationID = req.query.id;
 
     db.query(
@@ -195,7 +196,7 @@ module.exports = (db, actions) => {
   });
 
   // This route is used for live searching for a user within the database using the search bar
-  router.get("/searchuser", validateToken, (req, res) => {
+  router.get('/searchuser', validateToken, (req, res) => {
     const searchUserInput = `%${req.query.searchValue}%`;
     const { contact } = req;
 
@@ -212,7 +213,7 @@ module.exports = (db, actions) => {
     ).then(({ rows }) => res.json(rows));
   });
 
-  router.post("/feedback", (req, res) => {
+  router.post('/feedback', (req, res) => {
     const { fullName, feedback } = req.body;
 
     db.query(
@@ -226,7 +227,7 @@ module.exports = (db, actions) => {
       .catch((error) => res.status(400).json({ error }));
   });
 
-  router.get("/feedback", (req, res) => {
+  router.get('/feedback', (req, res) => {
     db.query(
       `
     SELECT *

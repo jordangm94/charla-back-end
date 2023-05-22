@@ -1,10 +1,10 @@
 const PORT = process.env.PORT || 8001;
-const http = require("http");
-const { Server } = require("socket.io");
-const sharedSession = require("express-socket.io-session");
-const ENV = require("./environment");
+const http = require('http');
+const { Server } = require('socket.io');
+const sharedSession = require('express-socket.io-session');
+const ENV = require('./environment');
 
-function getContactByEmail(db, email) {
+const getContactByEmail = (db, email) => {
   const queryString = `
     SELECT *
     FROM contact
@@ -16,9 +16,9 @@ function getContactByEmail(db, email) {
     .catch((error) => {
       console.log(error.message);
     });
-}
+};
 
-function getContactByUsername(db, username) {
+const getContactByUsername = (db, username) => {
   const queryString = `
     SELECT *
     FROM contact
@@ -30,9 +30,9 @@ function getContactByUsername(db, username) {
     .catch((error) => {
       console.log(error.message);
     });
-}
+};
 
-function registerContact(
+const registerContact = (
   db,
   firstName,
   lastName,
@@ -40,7 +40,7 @@ function registerContact(
   email,
   hashedPassword,
   profilePic
-) {
+) => {
   const queryString = `
     INSERT INTO contact (first_name, last_name, user_name, email, password_hash, profile_photo_url)
     VALUES ($1, $2, $3, $4, $5, $6)
@@ -61,16 +61,16 @@ function registerContact(
     .catch((error) => {
       console.log(error.message);
     });
-}
+};
 
-const app = require("./application")(ENV, {
+const app = require('./application')(ENV, {
   getContactByEmail,
   getContactByUsername,
   registerContact,
 });
 
 const server = http.Server(app);
-const { sessionMiddleware } = require("./serverController");
+const { sessionMiddleware } = require('./serverController');
 const {
   authorizeUser,
   updateParticipantStatus,
@@ -78,16 +78,16 @@ const {
   newMessage,
   initializeUser,
   closeUser,
-} = require("./socketController");
+} = require('./socketController');
 
 const io = new Server(server, {
   cors: {
     origin: [
-      "http://localhost:3000",
-      "http://localhost:3001",
-      "http://localhost:3002",
+      'http://localhost:3000',
+      'http://localhost:3001',
+      'http://localhost:3002',
     ],
-    method: ["GET", "POST"],
+    method: ['GET', 'POST'],
     credentials: true,
   },
 });
@@ -95,23 +95,23 @@ const io = new Server(server, {
 io.use(sharedSession(sessionMiddleware));
 io.use(authorizeUser);
 
-io.on("connection", (socket) => {
+io.on('connection', (socket) => {
   console.log(`User Connected: ${socket.id}`);
   initializeUser(socket);
 
-  socket.on("update_participant_status", (values, callback) => {
+  socket.on('update_participant_status', (values, callback) => {
     updateParticipantStatus(socket, values, callback);
   });
 
-  socket.on("new_convo", (otherContact, callback) => {
+  socket.on('new_convo', (otherContact, callback) => {
     newConvo(socket, otherContact, callback);
   });
 
-  socket.on("new_message", (values, callback) => {
+  socket.on('new_message', (values, callback) => {
     newMessage(socket, values, callback);
   });
 
-  socket.on("disconnect", () => {
+  socket.on('disconnect', () => {
     console.log(`User Disconnected ${socket.id}`);
     closeUser(socket);
   });

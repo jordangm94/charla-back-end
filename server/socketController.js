@@ -1,17 +1,17 @@
 /* eslint-disable camelcase */
-const jwt = require("jsonwebtoken");
-const db = require("./db");
+const jwt = require('jsonwebtoken');
+const db = require('./db');
 
 module.exports.authorizeUser = async (socket, next) => {
   if (!socket.handshake.session.accessToken) {
-    console.log("Bad request!");
-    next(new Error("Not authorized"));
+    console.log('Bad request!');
+    next(new Error('Not authorized'));
   } else {
     const token = socket.handshake.session.accessToken;
 
     jwt.verify(token, process.env.JWT_SECRET, (error, decoded) => {
       if (error) {
-        return next(new Error("Unauthorized"));
+        return next(new Error('Unauthorized'));
       }
       socket.decoded = decoded;
     });
@@ -69,7 +69,7 @@ module.exports.updateParticipantStatus = async (socket, values, callback) => {
     if (otherContactSocketID.rows[0]) {
       socket
         .to(otherContactSocketID.rows[0].socket_id)
-        .emit("update_participant_status", updateParticipantStatusData.rows[0]);
+        .emit('update_participant_status', updateParticipantStatusData.rows[0]);
     }
   }
 };
@@ -78,7 +78,7 @@ module.exports.newConvo = async (socket, otherContact, callback) => {
   if (socket.user.id === otherContact.contactid) {
     callback({
       done: false,
-      error: "Cannot create a conversation with yourself",
+      error: 'Cannot create a conversation with yourself',
     });
     return;
   }
@@ -201,14 +201,14 @@ module.exports.newConvo = async (socket, otherContact, callback) => {
     if (otherContactSocketID.rows[0]) {
       socket
         .to(otherContactSocketID.rows[0].socket_id)
-        .emit("new_convo", conversationObjectForOtherParticipant);
+        .emit('new_convo', conversationObjectForOtherParticipant);
     }
   }
 };
 
 module.exports.newMessage = async (socket, values, callback) => {
   if (socket.user.id === values.contactID) {
-    callback({ done: false, error: "Cannot send a message to yourself" });
+    callback({ done: false, error: 'Cannot send a message to yourself' });
     return;
   }
 
@@ -248,7 +248,7 @@ module.exports.newMessage = async (socket, values, callback) => {
     if (otherContactSocketID.rows[0]) {
       socket
         .to(otherContactSocketID.rows[0].socket_id)
-        .emit("new_message", newMessageInsertData.rows[0]);
+        .emit('new_message', newMessageInsertData.rows[0]);
     }
   }
 };
