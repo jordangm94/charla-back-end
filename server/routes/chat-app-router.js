@@ -26,7 +26,7 @@ module.exports = (db, actions) => {
           message: 'An account with this email already exists!',
         });
       }
-      getContactByUsername(db, username).then(() => {
+      getContactByUsername(db, username).then((contact) => {
         if (contact) {
           return res.status(400).json({
             error: 'Username exists',
