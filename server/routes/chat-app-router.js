@@ -41,28 +41,28 @@ module.exports = (db, actions) => {
           username,
           email,
           hashedPassword,
-          'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png',
-          'hello'
-        )
-          .then(() => {
-            const accessToken = createToken(contact);
+          'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png'
+        ).then((registered) => {
+          const accessToken = createToken(registered);
+          console.log(accessToken);
 
-            req.session.accessToken = accessToken;
+          req.session.accessToken = accessToken;
 
-            const loggedInUser = {
-              id: contact.id,
-              firstName: contact.first_name,
-              lastName: contact.last_name,
-              profilePhotoURL: contact.profile_photo_url,
-            };
-
-            return res.json({
-              error: null,
-              authenticated: true,
-              loggedInUser,
-            });
-          })
-          .catch((error) => res.status(400).json({ error }));
+          const loggedInUser = {
+            id: registered.id,
+            firstName: registered.first_name,
+            lastName: registered.last_name,
+            profilePhotoURL: registered.profile_photo_url,
+          };
+          return res.json({
+            error: null,
+            authenticated: true,
+            loggedInUser,
+          });
+        })
+          .catch((error) => {
+            res.status(400).json({ error });
+          });
       });
     });
   });
