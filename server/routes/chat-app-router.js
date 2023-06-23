@@ -44,7 +44,6 @@ module.exports = (db, actions) => {
           'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png'
         ).then((registered) => {
           const accessToken = createToken(registered);
-          console.log(accessToken);
 
           req.session.accessToken = accessToken;
 
