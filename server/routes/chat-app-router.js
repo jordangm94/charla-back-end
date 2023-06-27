@@ -56,7 +56,7 @@ module.exports = (db, actions) => {
           return res.json({
             error: null,
             authenticated: true,
-            loggedInUser,
+            loggedInUser
           });
         })
           .catch((error) => {
@@ -89,8 +89,7 @@ module.exports = (db, actions) => {
   });
 
   router.post('/authenticate', validateToken, (req, res) => {
-    const { authenticated } = req;
-    const { contact } = req;
+    const { authenticated, contact } = req;
     return res.json({ authenticated, contact });
   });
 
